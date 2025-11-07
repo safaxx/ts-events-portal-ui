@@ -1,15 +1,19 @@
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-
-import Login from './components/Login/Login.jsx';
-
+import Login from './components/Account/Login/Login.jsx';
+import AddEventForm from './components/Events/AddEvent/AddEventForm.jsx';
+import Dashboard from './components/Dashboard/Dashboard.jsx'
 // A simple Home component for this example
 function Home() {
   return (
     <div>
-      <h2>Home Page</h2>
-      <p>Welcome to the homepage!</p>
+      <h2>Tech Sisters Events</h2>
+      
       <Link to="/login">Go to Login</Link>
+      <br></br>
+      <Link to="/add-event">Add Event</Link>
+      <br></br>
+      <Link to="/all-events">Dashboard</Link>
     </div>
   );
 }
@@ -17,16 +21,11 @@ function Home() {
 function App() {
   return (
     <Router>
-      {/* Routes component wrappers all your routes */}
-      <Routes>
-        {/* This route defines the path for the Home page */}
+      <Routes>     
         <Route path="/" element={<Home />} />
-        
-        {/* This route defines the path for the Login page */}
         <Route path="/login" element={<Login />} />
-        
-        {/* You can add more routes here */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/add-event" element={<AddEventForm />} />
+        <Route path="/all-events" element={<Dashboard />} />
       </Routes>
     </Router>
   );

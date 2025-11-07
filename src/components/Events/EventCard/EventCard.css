@@ -1,0 +1,150 @@
+.event-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.event-type-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.event-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin: 0;
+  padding-right: 100px; /* Space for badge */
+}
+
+.event-description {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.event-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.detail-icon {
+  font-size: 16px;
+}
+
+.detail-text {
+  font-weight: 500;
+}
+
+.organizer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.organizer-label {
+  color: #888;
+}
+
+.organizer-email {
+  color: #e91e63;
+  font-weight: 500;
+}
+
+.event-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #f0f0f0;
+  color: #555;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.event-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.rsvp-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.rsvp-icon {
+  font-size: 16px;
+}
+
+.rsvp-button {
+  background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rsvp-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-card {
+    padding: 20px;
+  }
+
+  .event-title {
+    font-size: 1.25rem;
+    padding-right: 80px;
+  }
+
+  .event-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
