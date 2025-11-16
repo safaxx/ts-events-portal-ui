@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 // Set up your base API URL. 
 // It's better to put this in a .env file, but this is fine for now.
@@ -74,8 +75,33 @@ const isAuthenticated = () => {
     return false;
   }
 
+  try {
+    // 2. Decode the token to get its payload
+    const decodedToken = jwtDecode(token);
 
-  return true;
+    // 'exp' is the property for expiration time (it's in *seconds*)
+    const expirationTimeInSeconds = decodedToken.exp;
+    
+    // Get the current time in *seconds*
+    const currentTimeInSeconds = Date.now() / 1000;
+
+    // 3. Compare the times
+    if (expirationTimeInSeconds < currentTimeInSeconds) {
+      console.warn("JWT token has expired.");
+      localStorage.removeItem('accessToken'); // Clean up the expired token
+      return false; // Token is expired
+    }
+
+    // If we're here, the token exists and is not expired
+    return true;
+
+  } catch (error) {
+    // This will catch errors if the token is malformed or invalid
+    console.error("Error decoding JWT token:", error);
+    localStorage.removeItem('accessToken'); // Clean up the invalid token
+    return false;
+  }
+
 };
 
 /**
