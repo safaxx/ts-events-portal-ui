@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 
 // Set up your base API URL. 
 // It's better to put this in a .env file, but this is fine for now.
-const API_BASE_URL = 'http://localhost:8080/api/auth';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 /**
  * Sends a POST request to the /send-otp endpoint.
@@ -14,7 +14,7 @@ const sendOtp = async (email) => {
   try {
     console.log('Sending OTP to email:', email);
     // We send the email in the request body, as expected by most POST APIs
-    const response = await axios.post(`${API_BASE_URL}/send-otp`, {
+    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/send-otp`, {
       email: email,
     });
     
@@ -41,7 +41,7 @@ const loginWithOtp = async (email, otp) => {
     console.log('Verifying OTP for email:', email);
     
     // Send both email and OTP to the login endpoint
-    const response = await axios.post(`${API_BASE_URL}/login`, {
+    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
       email: email,
       otp: otp,
     });
