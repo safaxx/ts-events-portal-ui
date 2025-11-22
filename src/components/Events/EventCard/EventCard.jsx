@@ -1,32 +1,28 @@
 import React from 'react';
 import './EventCard.css';
+import { 
+  formatEventDateTime, 
+  getRelativeDate,
+  getTimeUntilEvent,
+  getTimezoneAbbreviation,
+  getUserTimezone 
+} from '../../../utils/TimeZoneUtils';
 
 function EventCard({ event }) {
-  // Format the date and time nicely
-  const formatDateTime = (dateTimeString) => {
-    const date = new Date(dateTimeString);
-    return {
-      date: date.toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      }),
-      time: date.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      })
-    };
-  };
-
-  const { date, time } = formatDateTime(event.eventDateTime);
+  // Format the date and time in user's timezone
+  const { date, time, dateObject } = formatEventDateTime(event.eventDateTime);
+  const relativeDate = getRelativeDate(event.eventDateTime);
+  const timeUntil = getTimeUntilEvent(event.eventDateTime);
+  const userTimezone = getTimezoneAbbreviation(getUserTimezone());
 
   // Parse tags if they exist
   const tags = event.tags ? event.tags.split(',').map(tag => tag.trim()) : [];
 
+  // Check if event is in the past
+  const isPastEvent = dateObject && dateObject < new Date();
+
   return (
-    <div className="event-card">
+    <div className={`event-card ${isPastEvent ? 'past-event' : ''}`}>
       {/* Event Type Badge */}
       <div className="event-type-badge">
         {event.eventType === 'online' ? '🌐 Online' : '📍 In-Person'}
@@ -42,7 +38,7 @@ function EventCard({ event }) {
       <div className="event-details">
         <div className="detail-item">
           <span className="detail-icon">📅</span>
-          <span className="detail-text">{date}</span>
+          <span className="detail-text">{relativeDate}</span>
         </div>
         <div className="detail-item">
           <span className="detail-icon">⏰</span>
@@ -54,11 +50,23 @@ function EventCard({ event }) {
             <span className="detail-text">{event.duration} mins</span>
           </div>
         )}
-        <div className="detail-item">
-          <span className="detail-icon">🌍</span>
-          <span className="detail-text">{event.timezone}</span>
-        </div>
       </div>
+
+      {/* Timezone Info 
+      <div className="timezone-info">
+        <span className="timezone-icon">🌍</span>
+        <span className="timezone-text">
+          {userTimezone} (Your timezone)
+        </span>
+      </div> */}
+
+      {/* Time Until Event */}
+      {!isPastEvent && (
+        <div className="time-until">
+          <span className="time-until-icon">⏳</span>
+          <span className="time-until-text">{timeUntil}</span>
+        </div>
+      )}
 
       {/* Organizer Info */}
       <div className="organizer-info">
@@ -81,7 +89,9 @@ function EventCard({ event }) {
           <span className="rsvp-icon">👥</span>
           <span>{event.allRSVPs || 0} attending</span>
         </div>
-        <button className="rsvp-button">RSVP</button>
+        {!isPastEvent && (
+          <button className="rsvp-button">RSVP</button>
+        )}
       </div>
     </div>
   );

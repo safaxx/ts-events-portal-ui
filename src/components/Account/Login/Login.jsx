@@ -119,7 +119,7 @@ function Login() {
              "Error in authentication. Please try again.",
         });
       }else{
-        navigate('/all-events');
+        navigate('/dashboard');
       }
 
       

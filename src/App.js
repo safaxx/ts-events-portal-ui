@@ -16,7 +16,7 @@ function Home() {
 
       <Link to="/add-event">Add Event</Link>
       <br></br>
-      <Link to="/all-events">Dashboard</Link>
+      <Link to="/dashboard">Dashboard</Link>
     </div>
   );
 }
@@ -36,7 +36,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/all-events" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );

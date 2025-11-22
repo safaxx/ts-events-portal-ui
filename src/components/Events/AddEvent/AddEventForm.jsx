@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddEventForm.css";
 import eventService from "../../Services/EventService";
+import { getUserTimezone, getTimezoneAbbreviation } from "../../../utils/TimeZoneUtils";
 
 function AddEventForm() {
+  const [userTimezone, setUserTimezone] = useState(getUserTimezone());
+  const [timezoneAbbr, setTimezoneAbbr] = useState('');
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     organizer_email: "",
     event_datetime: "",
-    timezone: "UTC",
+    timezone: "",
     event_type: "online",
     event_host_email: "",
     tags: "",
@@ -18,6 +22,20 @@ function AddEventForm() {
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
+  // Set user's timezone on component mount
+  useEffect(() => {
+    const tz = getUserTimezone();
+    const abbr = getTimezoneAbbreviation(tz);
+    setUserTimezone(tz);
+    setTimezoneAbbr(abbr);
+    
+    // Pre-fill timezone in form
+    setFormData(prev => ({
+      ...prev,
+      timezone: tz
+    }));
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -25,24 +43,23 @@ function AddEventForm() {
       [name]: value,
     }));
   };
-  const convertToISO8601 = (datetimeLocal, timezone) => {
-    // Add seconds to the datetime if not present
-    const dateTimeWithSeconds = datetimeLocal.includes(":00:00")
-      ? datetimeLocal
-      : datetimeLocal + ":00";
 
-    // Timezone offset mapping
-    const timezoneOffsets = {
-      UTC: "+00:00",
-      "America/New_York": "-05:00",
-      "America/Chicago": "-06:00",
-      "America/Los_Angeles": "-08:00",
-      "Asia/Kolkata": "+05:30",
-      "Europe/London": "+00:00",
-    };
-
-    const offset = timezoneOffsets[timezone] || "+00:00";
-    return `${dateTimeWithSeconds}${offset}`;
+  /**
+   * Converts the datetime-local input to ISO 8601 format with timezone
+   */
+  const convertToISO8601 = (datetimeLocal) => {
+    if (!datetimeLocal) return '';
+    
+    // The datetime-local input gives us a string like "2025-11-22T18:00"
+    // We need to convert this to ISO 8601 with the user's timezone offset
+    
+    // Create a date object in the user's local timezone
+    const date = new Date(datetimeLocal);
+    
+    // Get the ISO string (this is in UTC)
+    const isoString = date.toISOString();
+    
+    return isoString;
   };
 
   const handleSubmit = async (e) => {
@@ -53,10 +70,8 @@ function AddEventForm() {
     try {
       const formattedData = {
         ...formData,
-        event_datetime: convertToISO8601(
-          formData.event_datetime,
-          formData.timezone
-        ),
+        event_datetime: convertToISO8601(formData.event_datetime),
+        timezone: userTimezone, // Send the actual timezone name
       };
 
       const response = await eventService.createEvent(formattedData);
@@ -68,7 +83,7 @@ function AddEventForm() {
           description: "",
           organizer_email: "",
           event_datetime: "",
-          timezone: "UTC",
+          timezone: userTimezone,
           event_type: "online",
           event_host_email: "",
           tags: "",
@@ -109,6 +124,7 @@ function AddEventForm() {
             placeholder="e.g., Tech Sisters Meetup"
           />
         </div>
+
         {/* Description */}
         <div className="form-group">
           <label htmlFor="description">Description *</label>
@@ -122,6 +138,7 @@ function AddEventForm() {
             placeholder="Tell us about your event..."
           />
         </div>
+
         {/* Organizer Email */}
         <div className="form-group">
           <label htmlFor="organizer_email">Organizer Email *</label>
@@ -148,26 +165,16 @@ function AddEventForm() {
             required
           />
           <small className="helper-text">
-            Select date and time in your selected timezone
+            🌍 Time will be in your timezone: <strong>{timezoneAbbr}</strong> ({userTimezone})
           </small>
         </div>
-        {/* Timezone */}
-        <div className="form-group">
-          <label htmlFor="timezone">Timezone</label>
-          <select
-            id="timezone"
-            name="timezone"
-            value={formData.timezone}
-            onChange={handleChange}
-          >
-            <option value="UTC">UTC</option>
-            <option value="America/New_York">Eastern Time</option>
-            <option value="America/Chicago">Central Time</option>
-            <option value="America/Los_Angeles">Pacific Time</option>
-            <option value="Asia/Kolkata">India Standard Time</option>
-            <option value="Europe/London">London</option>
-          </select>
-        </div>
+
+        {/* Timezone - Now auto-detected and hidden */}
+        <input 
+          type="hidden" 
+          name="timezone" 
+          value={formData.timezone} 
+        />
 
         {/* Event Type */}
         <div className="form-group">
@@ -183,6 +190,7 @@ function AddEventForm() {
             <option value="in-person">In-Person</option>
           </select>
         </div>
+
         {/* Host Email */}
         <div className="form-group">
           <label htmlFor="event_host_email">Host Email</label>
@@ -195,6 +203,7 @@ function AddEventForm() {
             placeholder="host@example.com"
           />
         </div>
+
         {/* Duration */}
         <div className="form-group">
           <label htmlFor="duration">Duration (minutes)</label>
@@ -222,6 +231,7 @@ function AddEventForm() {
           />
           <small className="helper-text">Separate tags with commas</small>
         </div>
+
         {/* Submit Button */}
         <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? "Creating Event..." : "Create Event 🎉"}
@@ -230,4 +240,5 @@ function AddEventForm() {
     </div>
   );
 }
+
 export default AddEventForm;

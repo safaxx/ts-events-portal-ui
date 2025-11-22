@@ -1,7 +1,7 @@
 // src/api.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'http://localhost:8080/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -16,6 +16,9 @@ api.interceptors.request.use(
     if (token) {
       // Set the Authorization header
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔐 Adding token to request:', config.url);
+    } else {
+      console.warn('⚠️ No token found in localStorage');
     }
     return config;
   },
@@ -35,10 +38,12 @@ api.interceptors.response.use(
   (error) => {
     // Check if the error is a 401 or 403
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      console.error('Authentication Error: Redirecting to login...');
+      console.error('Authentication Error:', error.response.status);
       
       // Clear the stored token to log the user out
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('name');
+      localStorage.removeItem('email');
       
       // Redirect to the login page
       // We check the current path to avoid an infinite redirect loop
