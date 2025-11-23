@@ -1,12 +1,15 @@
-import React from 'react';
-import './EventCard.css';
-import { 
-  formatEventDateTime, 
+import React, { useState } from "react";
+import authService from "../../Services/AuthService";
+import { useNavigate } from "react-router-dom";
+import "./EventCard.css";
+import {
+  formatEventDateTime,
   getRelativeDate,
   getTimeUntilEvent,
   getTimezoneAbbreviation,
-  getUserTimezone 
-} from '../../../utils/TimeZoneUtils';
+  getUserTimezone,
+} from "../../../utils/TimeZoneUtils";
+import eventService from "../../Services/EventService";
 
 function EventCard({ event }) {
   // Format the date and time in user's timezone
@@ -16,16 +19,78 @@ function EventCard({ event }) {
   const userTimezone = getTimezoneAbbreviation(getUserTimezone());
 
   // Parse tags if they exist
-  const tags = event.tags ? event.tags.split(',').map(tag => tag.trim()) : [];
+  const tags = event.tags ? event.tags.split(",").map((tag) => tag.trim()) : [];
 
   // Check if event is in the past
   const isPastEvent = dateObject && dateObject < new Date();
 
+  const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [hasRSVPed, setHasRSVPed] = useState(event.currentUserRSVP || false);
+
+
+  const handleRSVP = async () => {
+    // Check if user is logged in
+    if (!authService.isAuthenticated()) {
+      // Redirect to login page
+      navigate("/login");
+      return;
+    }
+    setLoading(true);
+    setMessage({ text: "", type: "" });
+
+    try {
+      const response = await eventService.rsvpToEvent(event.eventId, true);
+      if (response.success) {
+        setMessage({ text: "RSVP successful!", type: "success" });
+        setHasRSVPed(true);
+        setTimeout(() => {
+          setMessage({ text: "", type: "" });
+        }, 3000);
+      } else {
+        setMessage({
+          text: response.message || "Failed to RSVP",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting RSVP:", error);
+      
+       // Check if it's a duplicate RSVP error
+      if (error.message.includes('already RSVPed') || error.message.includes('already RSVP')) {
+        setHasRSVPed(true);
+        setMessage({ 
+          text: "You've already RSVP'd to this event!", 
+          type: "success" 
+        });
+        setTimeout(() => {
+          setMessage({ text: "", type: "" });
+        }, 3000);
+      }
+
+      // Check if it's an authentication error
+      if (
+        error.message.includes("unauthorized") ||
+        error.message.includes("Session expired")
+      ) {
+        navigate("/login");
+      } else {
+        setMessage({
+          text: error.message || "Failed to RSVP. Please try again.",
+          type: "error",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className={`event-card ${isPastEvent ? 'past-event' : ''}`}>
+    <div className={`event-card ${isPastEvent ? "past-event" : ""}`}>
       {/* Event Type Badge */}
       <div className="event-type-badge">
-        {event.eventType === 'online' ? '🌐 Online' : '📍 In-Person'}
+        {event.eventType === "online" ? "🌐 Online" : "📍 In-Person"}
       </div>
 
       {/* Event Title */}
@@ -78,20 +143,32 @@ function EventCard({ event }) {
       {tags.length > 0 && (
         <div className="event-tags">
           {tags.map((tag, index) => (
-            <span key={index} className="tag">{tag}</span>
+            <span key={index} className="tag">
+              {tag}
+            </span>
           ))}
         </div>
       )}
-
+      {/* RSVP Message */}
+      {message.text && (
+        <div className={`rsvp-message ${message.type}`}>{message.text}</div>
+      )}
       {/* RSVP Count & Button */}
       <div className="event-footer">
         <div className="rsvp-count">
           <span className="rsvp-icon">👥</span>
           <span>{event.allRSVPs || 0} attending</span>
         </div>
-        {!isPastEvent && (
-          <button className="rsvp-button">RSVP</button>
+        {!isPastEvent && !hasRSVPed && (
+          <button
+            className="rsvp-button"
+            onClick={handleRSVP}
+            disabled={isLoading}
+          >
+            {isLoading ? "RSVPing..." : "RSVP"}
+          </button>
         )}
+        {hasRSVPed && <div className="rsvp-confirmed">✓ You're going!</div>}
       </div>
     </div>
   );

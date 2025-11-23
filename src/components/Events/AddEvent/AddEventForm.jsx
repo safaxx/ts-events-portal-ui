@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AddEventForm.css";
 import eventService from "../../Services/EventService";
-import { getUserTimezone, getTimezoneAbbreviation } from "../../../utils/TimeZoneUtils";
+import {
+  getUserTimezone,
+  getTimezoneAbbreviation,
+} from "../../../utils/TimeZoneUtils";
 
 function AddEventForm() {
+  const navigate = useNavigate();
   const [userTimezone, setUserTimezone] = useState(getUserTimezone());
-  const [timezoneAbbr, setTimezoneAbbr] = useState('');
+  const [timezoneAbbr, setTimezoneAbbr] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,11 +33,11 @@ function AddEventForm() {
     const abbr = getTimezoneAbbreviation(tz);
     setUserTimezone(tz);
     setTimezoneAbbr(abbr);
-    
+
     // Pre-fill timezone in form
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      timezone: tz
+      timezone: tz,
     }));
   }, []);
 
@@ -48,17 +53,17 @@ function AddEventForm() {
    * Converts the datetime-local input to ISO 8601 format with timezone
    */
   const convertToISO8601 = (datetimeLocal) => {
-    if (!datetimeLocal) return '';
-    
+    if (!datetimeLocal) return "";
+
     // The datetime-local input gives us a string like "2025-11-22T18:00"
     // We need to convert this to ISO 8601 with the user's timezone offset
-    
+
     // Create a date object in the user's local timezone
     const date = new Date(datetimeLocal);
-    
+
     // Get the ISO string (this is in UTC)
     const isoString = date.toISOString();
-    
+
     return isoString;
   };
 
@@ -66,6 +71,20 @@ function AddEventForm() {
     e.preventDefault();
     setLoading(true);
     setMessage({ text: "", type: "" });
+
+    // Check if user is logged in
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setMessage({
+        text: "You must be logged in to create an event. Redirecting to login...",
+        type: "error",
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+      setLoading(false);
+      return;
+    }
 
     try {
       const formattedData = {
@@ -75,20 +94,16 @@ function AddEventForm() {
       };
 
       const response = await eventService.createEvent(formattedData);
+
       if (response.success) {
-        setMessage({ text: "Event created successfully!", type: "success" });
-        // Reset form
-        setFormData({
-          title: "",
-          description: "",
-          organizer_email: "",
-          event_datetime: "",
-          timezone: userTimezone,
-          event_type: "online",
-          event_host_email: "",
-          tags: "",
-          duration: "",
-        });
+        setMessage({ text: "Event created successfully! 🎉", type: "success" });
+
+        // Wait 1.5 seconds to show success message, then navigate to dashboard
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+
+        //don't reset the form since user is being redirected
       } else {
         setMessage({
           text: response.message || "Failed to create event",
@@ -96,6 +111,7 @@ function AddEventForm() {
         });
       }
     } catch (error) {
+      console.error("❌ Error in handleSubmit:", error);
       setMessage({ text: "Error: " + error.message, type: "error" });
     } finally {
       setLoading(false);
@@ -165,16 +181,13 @@ function AddEventForm() {
             required
           />
           <small className="helper-text">
-            🌍 Time will be in your timezone: <strong>{timezoneAbbr}</strong> ({userTimezone})
+            🌍 Time will be in your timezone: <strong>{timezoneAbbr}</strong> (
+            {userTimezone})
           </small>
         </div>
 
         {/* Timezone - Now auto-detected and hidden */}
-        <input 
-          type="hidden" 
-          name="timezone" 
-          value={formData.timezone} 
-        />
+        <input type="hidden" name="timezone" value={formData.timezone} />
 
         {/* Event Type */}
         <div className="form-group">
@@ -231,6 +244,14 @@ function AddEventForm() {
           />
           <small className="helper-text">Separate tags with commas</small>
         </div>
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={() => navigate("/dashboard")}
+          disabled={isLoading}
+        >
+          Cancel
+        </button>
 
         {/* Submit Button */}
         <button type="submit" className="submit-button" disabled={isLoading}>
