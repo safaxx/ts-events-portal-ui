@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 // Set up your base API URL. 
@@ -109,11 +108,11 @@ const isAuthenticated = () => {
  */
 const logout = () => {
   localStorage.removeItem('accessToken');
-  // You might also want to remove user info
-  // localStorage.removeItem('user');
+  localStorage.removeItem('email');
+  localStorage.removeItem('name');
   
   // Redirect to login page
-  window.location.href = '/login'; 
+  window.location.href = '/dashboard'; 
 };
 
 

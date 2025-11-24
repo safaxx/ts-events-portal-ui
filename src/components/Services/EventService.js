@@ -1,8 +1,5 @@
-// This file handles all API calls to your Spring Boot backend
 import api from '../Services/ApiRequestInterceptor';
-
-// We no longer need this, as the 'api' instance has the baseURL
-// const API_BASE_URL = 'http://localhost:8080/api/v1';
+import axios from 'axios';
 
 const eventService = {
 
@@ -30,25 +27,69 @@ const eventService = {
   },
 
   /**
-   * Fetches all events.
+   * Fetches all events(PUBLIC - but sends auth token if available).
    * @returns {Promise<object>} The data from the API response.
    */
   getAllEvents: async () => {
     try {
-      // Use 'api.get'
-      // - No headers, method, or body needed
-      const response = await api.get('/events/all');
-      
-      // axios puts the response data in the 'data' property
+      const response = await api.get('/public/events/all');
       return response.data;
-
     } catch (error) {
-      // This catch block will now handle non-auth errors
       const message = error.response?.data?.message || error.message || 'Failed to fetch events';
       console.error('Error fetching events:', message);
       throw new Error(message);
     }
   },
+  
+  /**
+   * Fetches a single event by ID.
+   * @param {number} eventId - The event ID
+   * @returns {Promise<object>} The event data
+   */
+  getEventById: async (eventId) => {
+    try {
+      const response = await api.get(`/public/events/id?eventId=${eventId}`);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Failed to fetch event';
+      console.error('Error fetching event:', message);
+      throw new Error(message);
+    }
+  },
+ /**
+   * Submit RSVP for an event.
+   * @param {number} eventId - The event ID
+   * @param {boolean} rsvp - RSVP status (true = attending)
+   * @returns {Promise<object>} The response data
+   */
+  rsvpToEvent: async (eventId, rsvp = true) => {
+    try {
+      const response = await api.post('/events/rsvp', {
+        event_id: eventId,
+        rsvp: rsvp,
+      });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Failed to RSVP';
+      console.error('Error submitting RSVP:', message);
+      throw new Error(message);
+    }
+  },
+   /**
+   * Get user's RSVPs.
+   * @returns {Promise<object>} List of events the user has RSVP'd to
+   */
+  getMyRSVPs: async () => {
+    try {
+      const response = await api.get('/events/my-rsvps');
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Failed to fetch RSVPs';
+      console.error('Error fetching RSVPs:', message);
+      throw new Error(message);
+    }
+  },
+
 
 };
 

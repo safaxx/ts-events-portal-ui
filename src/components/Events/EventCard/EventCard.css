@@ -15,6 +15,16 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
+/* Past event styling */
+.event-card.past-event {
+  opacity: 0.7;
+  background: #f9f9f9;
+}
+
+.event-card.past-event .event-title {
+  color: #999;
+}
+
 .event-type-badge {
   position: absolute;
   top: 16px;
@@ -63,6 +73,43 @@
 
 .detail-text {
   font-weight: 500;
+}
+
+/* Timezone info styling */
+.timezone-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f0f7ff;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #0066cc;
+}
+
+.timezone-icon {
+  font-size: 14px;
+}
+
+.timezone-text {
+  font-weight: 500;
+}
+
+/* Time until event styling */
+.time-until {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff3e0;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #e65100;
+  font-weight: 600;
+}
+
+.time-until-icon {
+  font-size: 14px;
 }
 
 .organizer-info {
