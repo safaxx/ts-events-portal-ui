@@ -14,7 +14,7 @@ const sendOtp = async (email) => {
   try {
     console.log('Sending OTP to email:', email);
     // We send the email in the request body, as expected by most POST APIs
-    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/send-otp`, {
+    const response = await axios.post(`${API_BASE_URL}/auth/send-otp`, {
       email: email,
     });
     
@@ -41,7 +41,7 @@ const loginWithOtp = async (email, otp) => {
     console.log('Verifying OTP for email:', email);
     
     // Send both email and OTP to the login endpoint
-    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email: email,
       otp: otp,
     });
