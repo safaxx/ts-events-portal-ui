@@ -1,0 +1,44 @@
+.event-actions-row {
+  display: flex;
+  gap: 14px;
+  margin: 20px 0;
+  align-items: center;
+}
+
+.edit-button {
+  background: #FDD9D9;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.edit-button:hover {
+  background: #ffe799;
+}
+
+.rsvp-button {
+  background: #d5e8ff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.rsvp-button:hover {
+  background: #bcdcff;
+}
+
+.rsvp-confirmed {
+  background: #e4ffe4;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #247c39;
+  font-weight: 700;
+  border: 1px solid #99e0a3;
+  font-size: 0.95rem;
+}

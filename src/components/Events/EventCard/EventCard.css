@@ -1,197 +1,309 @@
+/* Tech Sisters Color Palette */
+:root {
+  --ts-primary: #0F3363;      /* Dark blue - primary */
+  --ts-secondary: #4970A5;    /* Medium blue - secondary */
+  --ts-text: #747474;         /* Gray - text */
+  --ts-accent: #FBF1E8;       /* Beige - accent */
+  --ts-light-blue: #C2D7ED;   /* Light blue */
+  --ts-pink: #FDD9D9;         /* Light pink */
+}
+
 .event-card {
   background: white;
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(15, 51, 99, 0.08);
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   position: relative;
+  border: 1px solid var(--ts-light-blue);
 }
 
 .event-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(15, 51, 99, 0.15);
+  border-color: var(--ts-secondary);
+  background: var(--ts-accent);
 }
 
 /* Past event styling */
 .event-card.past-event {
   opacity: 0.7;
-  background: #f9f9f9;
+  background: #fafafa;
 }
 
 .event-card.past-event .event-title {
-  color: #999;
+  color: var(--ts-text);
 }
 
 .event-type-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+  top: 20px;
+  right: 20px;
+  background: var(--ts-primary);
   color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 2px 8px rgba(15, 51, 99, 0.3);
 }
 
 .event-title {
-  color: #2c3e50;
-  font-size: 1.5rem;
+  color: var(--ts-primary);
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: "Poppins", sans-serif;
   margin: 0;
-  padding-right: 100px; /* Space for badge */
+  padding-right: 120px;
+  line-height: 1.3;
 }
 
 .event-description {
-  color: #555;
-  line-height: 1.6;
+  color: #404040;
+  line-height: 1.7;
   margin: 0;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
 }
 
 .event-details {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px 0;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 2px solid var(--ts-light-blue);
+  border-bottom: 2px solid var(--ts-light-blue);
 }
 
 .detail-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--ts-text);
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
 }
 
 .detail-icon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .detail-text {
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--ts-primary);
 }
 
 /* Timezone info styling */
 .timezone-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #f0f7ff;
-  border-radius: 6px;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--ts-light-blue);
+  border-radius: 8px;
   font-size: 13px;
-  color: #0066cc;
+  color: var(--ts-primary);
+  border: 1px solid var(--ts-secondary);
+  font-family: "Poppins", sans-serif;
 }
 
 .timezone-icon {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .timezone-text {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Time until event styling */
 .time-until {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #fff3e0;
-  border-radius: 6px;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--ts-pink);
+  border-radius: 8px;
   font-size: 13px;
-  color: #e65100;
-  font-weight: 600;
+  color: var(--ts-primary);
+  font-weight: 700;
+  border: 1px solid #fcc7c7;
+  font-family: "Poppins", sans-serif;
 }
 
 .time-until-icon {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .organizer-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 14px;
+  padding: 8px 0;
+  font-family: "Poppins", sans-serif;
 }
 
 .organizer-label {
-  color: #888;
+  color: var(--ts-text);
+  font-weight: 500;
 }
 
 .organizer-email {
-  color: #e91e63;
-  font-weight: 500;
+  color: var(--ts-secondary);
+  font-weight: 600;
 }
 
 .event-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .tag {
-  background: #f0f0f0;
-  color: #555;
-  padding: 4px 12px;
-  border-radius: 16px;
+  background: var(--ts-accent);
+  color: var(--ts-primary);
+  padding: 6px 14px;
+  border-radius: 8px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  border: 1px solid var(--ts-light-blue);
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  background: var(--ts-primary);
+  color: white;
+  border-color: var(--ts-primary);
 }
 
 .event-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 12px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .rsvp-count {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #666;
-  font-size: 14px;
-  font-weight: 500;
+  gap: 8px;
+  color: var(--ts-text);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
 }
 
 .rsvp-icon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .rsvp-button {
-  background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+  background: var(--ts-primary);
   color: white;
   border: none;
-  padding: 10px 24px;
-  border-radius: 6px;
+  padding: 12px 28px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(15, 51, 99, 0.3);
 }
 
-.rsvp-button:hover {
+.rsvp-button:hover:not(:disabled) {
+  background: var(--ts-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  box-shadow: 0 6px 16px rgba(15, 51, 99, 0.4);
+}
+
+.rsvp-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* RSVP Message */
+.rsvp-message {
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.rsvp-message.success {
+  background: var(--ts-accent);
+  color: var(--ts-primary);
+  border: 2px solid var(--ts-light-blue);
+}
+
+.rsvp-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 2px solid #f5c2c7;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RSVP Confirmed State */
+.rsvp-confirmed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--ts-accent);
+  color: var(--ts-primary);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  border: 2px solid var(--ts-light-blue);
+  box-shadow: 0 2px 8px rgba(15, 51, 99, 0.1);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .event-card {
-    padding: 20px;
+    padding: 24px;
   }
 
   .event-title {
-    font-size: 1.25rem;
-    padding-right: 80px;
+    font-size: 1.35rem;
+    padding-right: 100px;
   }
 
   .event-details {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+  }
+
+  .event-footer {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .rsvp-button,
+  .rsvp-confirmed {
+    width: 100%;
   }
 }

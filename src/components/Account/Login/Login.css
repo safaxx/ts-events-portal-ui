@@ -1,26 +1,157 @@
+/* Tech Sisters Color Palette */
+:root {
+  --ts-primary: #0F3363;      /* Dark blue - primary */
+  --ts-secondary: #4970A5;    /* Medium blue - secondary */
+  --ts-text: #747474;         /* Gray - text */
+  --ts-accent: #FBF1E8;       /* Beige - accent */
+  --ts-light-blue: #C2D7ED;   /* Light blue */
+  --ts-pink: #FDD9D9;         /* Light pink */
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f4f4f4;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--ts-accent) 0%, var(--ts-light-blue) 100%);
+  padding: 20px;
 }
 
 .login-form {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(15, 51, 99, 0.15);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   box-sizing: border-box;
+  border: 2px solid var(--ts-light-blue);
 }
 
 .login-form h2 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
+  margin-bottom: 1rem;
+  color: var(--ts-primary);
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
 }
 
+.login-form label {
+  font-family: "Poppins", sans-serif;
+  color: var(--ts-text);
+}
 
+/* Override Material-UI styles to match Tech Sisters */
+.login-form .MuiTextField-root {
+  margin-bottom: 1.5rem;
+}
 
+.login-form .MuiOutlinedInput-root {
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+}
+
+.login-form .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ts-light-blue);
+  border-width: 2px;
+}
+
+.login-form .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ts-secondary);
+}
+
+.login-form .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ts-primary);
+  border-width: 2px;
+}
+
+.login-form .MuiOutlinedInput-root.Mui-focused {
+  background: var(--ts-accent);
+}
+
+.login-form .MuiInputLabel-root {
+  color: var(--ts-text);
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+.login-form .MuiInputLabel-root.Mui-focused {
+  color: var(--ts-primary);
+}
+
+.login-form .MuiButton-root {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+}
+
+.login-form .MuiButton-contained {
+  background-color: var(--ts-primary);
+  box-shadow: 0 4px 12px rgba(15, 51, 99, 0.3);
+}
+
+.login-form .MuiButton-contained:hover {
+  background-color: var(--ts-secondary);
+  box-shadow: 0 6px 16px rgba(15, 51, 99, 0.4);
+}
+
+.login-form .MuiButton-text {
+  color: var(--ts-secondary);
+}
+
+.login-form .MuiButton-text:hover {
+  background-color: var(--ts-accent);
+  color: var(--ts-primary);
+}
+
+/* OTP Input styling */
+.form-group input {
+  border: 2px solid var(--ts-light-blue) !important;
+  border-radius: 8px !important;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--ts-primary) !important;
+  background: var(--ts-accent);
+  box-shadow: 0 0 0 3px rgba(15, 51, 99, 0.1);
+  outline: none;
+}
+
+.form-group label {
+  color: var(--ts-text);
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Alert styling */
+.MuiAlert-standardSuccess {
+  background-color: var(--ts-accent) !important;
+  color: var(--ts-primary) !important;
+  border: 2px solid var(--ts-light-blue) !important;
+  border-radius: 8px !important;
+  font-family: "Poppins", sans-serif !important;
+}
+
+.MuiAlert-standardError {
+  border-radius: 8px !important;
+  font-family: "Poppins", sans-serif !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-form {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .login-form h2 {
+    font-size: 1.6rem;
+  }
+}

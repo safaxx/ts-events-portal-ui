@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import api from './ApiRequestInterceptor';
 
 // Set up your base API URL. 
-// It's better to put this in a .env file, but this is fine for now.
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 /**
@@ -14,7 +14,7 @@ const sendOtp = async (email) => {
   try {
     console.log('Sending OTP to email:', email);
     // We send the email in the request body, as expected by most POST APIs
-    const response = await axios.post(`${API_BASE_URL}/auth/send-otp`, {
+    const response = await api.post('/auth/send-otp', {
       email: email,
     });
     
@@ -30,6 +30,8 @@ const sendOtp = async (email) => {
   }
 };
 
+
+
 /**
  * Sends a POST request to verify the OTP and log the user in.
  * @param {string} email - The user's email address.
@@ -41,7 +43,7 @@ const loginWithOtp = async (email, otp) => {
     console.log('Verifying OTP for email:', email);
     
     // Send both email and OTP to the login endpoint
-    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+    const response = await api.post('/auth/login', {
       email: email,
       otp: otp,
     });
@@ -104,6 +106,12 @@ const isAuthenticated = () => {
 
 };
 
+const getUserEmail = () => {
+  return localStorage.getItem("email") || null;
+};
+
+
+
 /**
  * Removes the access token from localStorage to log the user out.
  */
@@ -122,6 +130,7 @@ const authService = {
   loginWithOtp,
   isAuthenticated,
   logout,
+  getUserEmail
 };
 
 export default authService;

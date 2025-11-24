@@ -8,34 +8,42 @@ function NavBar() {
   const isAuthed = authService.isAuthenticated();
 
   const handleLogout = () => {
-    authService.logout(); // clears localStorage + redirects to /login
-    // optional: hard reload to reset axios interceptors
+    authService.logout();
     window.location.href = "/dashboard";
   };
 
   return (
     <header className="topbar">
-      <img src="/logo-ts.svg" alt="Tech Sisters logo" className="topbar__logo" />
       <div className="topbar__brand" onClick={() => nav("/dashboard")}>
-        Tech Sisters Events
+        <img
+          src="/logo-ts.svg"
+          alt="Tech Sisters logo"
+          className="topbar__logo"
+        />
+        
       </div>
 
       <nav className="topbar__nav">
-        <>
-          <button className="topbar__link" onClick={() => nav("/create-event")}>
-            Create Event
-          </button>
-        </>
+        {/* Always visible */}
+        <button className="topbar__link" onClick={() => nav("/create-event")}>
+          Create Event
+        </button>
 
+        {/* Visible only when logged in */}
+        {isAuthed && (
+          <button className="topbar__link" onClick={() => nav("/my-events")}>
+            My Events
+          </button>
+        )}
+
+        {/* Login / Logout */}
         {isAuthed ? (
-          <>
-            <button
-              className="topbar__link topbar__logout"
-              onClick={handleLogout}
-            >
-              Log out
-            </button>
-          </>
+          <button
+            className="topbar__link topbar__logout"
+            onClick={handleLogout}
+          >
+            Log out
+          </button>
         ) : (
           <button className="topbar__link" onClick={() => nav("/login")}>
             Log in

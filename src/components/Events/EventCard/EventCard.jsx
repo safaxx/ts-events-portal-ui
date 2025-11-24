@@ -17,77 +17,82 @@ function EventCard({ event }) {
   const relativeDate = getRelativeDate(event.eventDateTime);
   const timeUntil = getTimeUntilEvent(event.eventDateTime);
   const userTimezone = getTimezoneAbbreviation(getUserTimezone());
-
-  // Parse tags if they exist
   const tags = event.tags ? event.tags.split(",").map((tag) => tag.trim()) : [];
-
-  // Check if event is in the past
-  const isPastEvent = dateObject && dateObject < new Date();
-
+  const isPastEvent = dateObject && dateObject < new Date(); // Check if event is in the past
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [hasRSVPed, setHasRSVPed] = useState(event.currentUserRSVP || false);
 
-
-  const handleRSVP = async () => {
-    // Check if user is logged in
-    if (!authService.isAuthenticated()) {
-      // Redirect to login page
-      navigate("/login");
-      return;
-    }
-    setLoading(true);
-    setMessage({ text: "", type: "" });
-
-    try {
-      const response = await eventService.rsvpToEvent(event.eventId, true);
-      if (response.success) {
-        setMessage({ text: "RSVP successful!", type: "success" });
-        setHasRSVPed(true);
-        setTimeout(() => {
-          setMessage({ text: "", type: "" });
-        }, 3000);
-      } else {
-        setMessage({
-          text: response.message || "Failed to RSVP",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Error submitting RSVP:", error);
-      
-       // Check if it's a duplicate RSVP error
-      if (error.message.includes('already RSVPed') || error.message.includes('already RSVP')) {
-        setHasRSVPed(true);
-        setMessage({ 
-          text: "You've already RSVP'd to this event!", 
-          type: "success" 
-        });
-        setTimeout(() => {
-          setMessage({ text: "", type: "" });
-        }, 3000);
-      }
-
-      // Check if it's an authentication error
-      if (
-        error.message.includes("unauthorized") ||
-        error.message.includes("Session expired")
-      ) {
-        navigate("/login");
-      } else {
-        setMessage({
-          text: error.message || "Failed to RSVP. Please try again.",
-          type: "error",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
+  const handleCardClick = () => {
+    navigate(`/events/${event.eventId}`);
   };
 
+  // const handleRSVP = async () => {
+  //   // Check if user is logged in
+  //   if (!authService.isAuthenticated()) {
+  //     // Redirect to login page
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   setMessage({ text: "", type: "" });
+
+  //   try {
+  //     const response = await eventService.rsvpToEvent(event.eventId, true);
+  //     if (response.success) {
+  //       setMessage({ text: "RSVP successful!", type: "success" });
+  //       setHasRSVPed(true);
+  //       setTimeout(() => {
+  //         setMessage({ text: "", type: "" });
+  //       }, 3000);
+  //     } else {
+  //       setMessage({
+  //         text: response.message || "Failed to RSVP",
+  //         type: "error",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting RSVP:", error);
+
+  //     // Check if it's a duplicate RSVP error
+  //     if (
+  //       error.message.includes("already RSVPed") ||
+  //       error.message.includes("already RSVP")
+  //     ) {
+  //       setHasRSVPed(true);
+  //       setMessage({
+  //         text: "You've already RSVP'd to this event!",
+  //         type: "success",
+  //       });
+  //       setTimeout(() => {
+  //         setMessage({ text: "", type: "" });
+  //       }, 3000);
+  //     }
+
+  //     // Check if it's an authentication error
+  //     if (
+  //       error.message.includes("unauthorized") ||
+  //       error.message.includes("Session expired")
+  //     ) {
+  //       navigate("/login");
+  //     } else {
+  //       setMessage({
+  //         text: error.message || "Failed to RSVP. Please try again.",
+  //         type: "error",
+  //       });
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   return (
-    <div className={`event-card ${isPastEvent ? "past-event" : ""}`}>
+    <div
+      className={`event-card ${isPastEvent ? "past-event" : ""}`}
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+    >
       {/* Event Type Badge */}
       <div className="event-type-badge">
         {event.eventType === "online" ? "🌐 Online" : "📍 In-Person"}
@@ -159,16 +164,9 @@ function EventCard({ event }) {
           <span className="rsvp-icon">👥</span>
           <span>{event.allRSVPs || 0} attending</span>
         </div>
-        {!isPastEvent && !hasRSVPed && (
-          <button
-            className="rsvp-button"
-            onClick={handleRSVP}
-            disabled={isLoading}
-          >
-            {isLoading ? "RSVPing..." : "RSVP"}
-          </button>
-        )}
-        {hasRSVPed && <div className="rsvp-confirmed">✓ You're going!</div>}
+        <button className="share-button" >
+          🔗 Share
+        </button>
       </div>
     </div>
   );
