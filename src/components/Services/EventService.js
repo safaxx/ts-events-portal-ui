@@ -75,6 +75,7 @@ const eventService = {
       throw new Error(message);
     }
   },
+  
    /**
    * Get user's RSVPs.
    * @returns {Promise<object>} List of events the user has RSVP'd to
@@ -90,6 +91,16 @@ const eventService = {
     }
   },
 
+  getMyCreatedEvents: async () => {
+    try{
+      const response = await api.get('/events/my-created');
+      return response.data;
+    }catch(error){
+      const message = error.response?.data?.message || error.message || 'Failed to fetch created-events';
+      console.error('Error fetching created-events:', message);
+      throw new Error(message);
+    }
+  }
 
 };
 

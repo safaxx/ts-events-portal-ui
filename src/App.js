@@ -5,6 +5,8 @@ import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import AddEventForm from "./components/Events/AddEvent/AddEventForm.jsx";
 import ProtectedRoute from "./components/Services/ProtectedRoute.js";
 import NavBar from "./components/NavBar/NavBar.jsx";
+import MyEventsPage from "./components/Events/MyEventsPage.jsx";
+import EventDetailsPage from "./components/Events/EventDetailsPage.jsx";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/my-events" element={<MyEventsPage />} />
+          <Route path="/events/:eventId" element={<EventDetailsPage />} />
           <Route
             path="/create-event"
             element={
