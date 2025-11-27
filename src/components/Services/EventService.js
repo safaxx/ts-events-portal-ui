@@ -75,7 +75,7 @@ const eventService = {
       throw new Error(message);
     }
   },
-  
+
    /**
    * Get user's RSVPs.
    * @returns {Promise<object>} List of events the user has RSVP'd to
@@ -100,7 +100,26 @@ const eventService = {
       console.error('Error fetching created-events:', message);
       throw new Error(message);
     }
-  }
+  },
+
+   /**
+   * Updates an existing event (PROTECTED - requires authentication).
+   * @param {number} eventId - The event ID
+   * @param {object} eventData - The updated event data
+   * @returns {Promise<object>} The data from the API response.
+   */
+  updateEvent: async (eventId, eventData) => {
+    try {
+      console.log('Updating event:', eventId, eventData);
+      const response = await api.put(`/events/update?eventId=${eventId}`, eventData);
+      console.log('Event updated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating event:', error);
+      const message = error.response?.data?.message || error.message || 'Failed to update event';
+      throw new Error(message);
+    }
+  },
 
 };
 

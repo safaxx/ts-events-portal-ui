@@ -18,11 +18,14 @@ function EventCard({ event }) {
   const timeUntil = getTimeUntilEvent(event.eventDateTime);
   const userTimezone = getTimezoneAbbreviation(getUserTimezone());
   const tags = event.tags ? event.tags.split(",").map((tag) => tag.trim()) : [];
-  const isPastEvent = dateObject && dateObject < new Date(); // Check if event is in the past
+  // Event is past only if NOW is after (start + duration)
+ const checkPastEvent = () => {
+  if (!dateObject || !event.duration) return false;
+
+  const eventEnd = new Date(dateObject.getTime() + event.duration * 60000); 
+  return new Date() > eventEnd;
+};
   const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: "", type: "" });
-  const [hasRSVPed, setHasRSVPed] = useState(event.currentUserRSVP || false);
 
   const handleViewDetails = (e) => {
     e.stopPropagation(); // Prevent card click
@@ -30,35 +33,67 @@ function EventCard({ event }) {
   };
 
   const handleShare = async (e) => {
-  e.stopPropagation(); // prevents card click
-  
-  const shareUrl = `${window.location.origin}/events/${event.eventId}`;
+    e.stopPropagation(); // prevents card click
 
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: event.title,
-        text: "Join this event on Gatherly!",
-        url: shareUrl,
-      });
-    } catch (error) {
-      console.log("Share canceled or failed:", error);
+    const shareUrl = `${window.location.origin}/events/${event.eventId}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: event.title,
+          text: "Join this event!",
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.log("Share canceled or failed:", error);
+      }
+    } else {
+      // Fallback for desktop
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
     }
-  } else {
-    // Fallback for desktop
-    navigator.clipboard.writeText(shareUrl);
-    alert("Link copied to clipboard!");
-  }
-};
+  };
+  // Check if event is currently live
+  const isLiveEvent = () => {
+    if (!event.eventDateTime || !event.duration) return false;
 
+    const start = new Date(event.eventDateTime);
+    const end = new Date(start.getTime() + event.duration * 60000);
+    const now = new Date();
+
+    return now >= start && now <= end;
+  };
 
   return (
-    <div className={`event-card ${isPastEvent ? "past-event" : ""}`}>
-      {/* Event Title */}
-      <h3 className="event-title">{event.title}</h3>
+    <div className={`event-card ${checkPastEvent() ? "past-event" : ""}`}>
+      {/* Event Title & Event link*/}
+      <div className="event-header">
+        <h3 className="event-title">{event.title}</h3>
+
+        {/* Show Join Now only if online + currently live */}
+        {event.eventType === "online" && isLiveEvent() ? (
+          <a
+            href={event.eventLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="join-now"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Join Now
+          </a>
+        ) : (
+          // Otherwise show the countdown (future events)
+          !checkPastEvent() && (
+            <div className="time-until">
+              <span className="time-until-icon">⏳</span>
+              <span className="time-until-text">{timeUntil}</span>
+            </div>
+          )
+        )}
+      </div>
 
       {/* Event Description */}
-      <p className="event-description">{event.description}</p>
+      <p className="event-description">{event.shortDescription}</p>
 
       {/* Event Details */}
       <div className="event-details">
@@ -70,12 +105,10 @@ function EventCard({ event }) {
           <span className="detail-icon">⏰</span>
           <span className="detail-text">{time}</span>
         </div>
-        {/* Event Type Badge */}
+
         <div className="detail-item">
-          <span className="detail-icon">🌐</span>
-          <span className="detail-text">
-            {event.eventType === "online" ? " Online" : "📍 In-Person"}
-          </span>
+          <span className="detail-icon">👥</span>
+          <span className="detail-text">{event.allRSVPs || 0}</span>
         </div>
       </div>
 
@@ -86,14 +119,6 @@ function EventCard({ event }) {
           {userTimezone} (Your timezone)
         </span>
       </div> */}
-
-      {/* Time Until Event */}
-      {!isPastEvent && (
-        <div className="time-until">
-          <span className="time-until-icon">⏳</span>
-          <span className="time-until-text">{timeUntil}</span>
-        </div>
-      )}
 
       {/* Organizer Info */}
       <div className="organizer-info">
@@ -111,17 +136,11 @@ function EventCard({ event }) {
           ))}
         </div>
       )}
-      {/* RSVP Message */}
-      {message.text && (
-        <div className={`rsvp-message ${message.type}`}>{message.text}</div>
-      )}
-      {/* RSVP Count & Button */}
+
       <div className="event-footer">
-        <div className="rsvp-count">
-          <span className="rsvp-icon">👥</span>
-          <span>{event.allRSVPs || 0}</span>
-        </div>
-        <button className="share-button"  onClick={handleShare}>Share</button>
+        <button className="share-button" onClick={handleShare}>
+          Share
+        </button>
         <button className="event-details-button" onClick={handleViewDetails}>
           View Details
         </button>

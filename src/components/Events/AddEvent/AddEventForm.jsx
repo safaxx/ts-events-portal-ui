@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "./AddEventForm.css";
 import eventService from "../../Services/EventService";
 import {
@@ -9,17 +9,25 @@ import {
 
 function AddEventForm() {
   const navigate = useNavigate();
+  const { eventId } = useParams(); // Get eventId from URL if editing
+  const location = useLocation();
   const [userTimezone, setUserTimezone] = useState(getUserTimezone());
   const [timezoneAbbr, setTimezoneAbbr] = useState("");
+  const loggedInEmail = localStorage.getItem("email");
+  // Determine if we're editing based on URL params or location state
+  const isEditMode = Boolean(eventId) || location.state?.event;
+  const eventToEdit = location.state?.event;
 
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
+    short_description: "",
+    long_description: "",
     organizer_email: "",
     event_datetime: "",
     timezone: "",
     event_type: "online",
-    event_host_email: "",
+    event_link: "",
+    event_location: "",
     tags: "",
     duration: "",
   });
@@ -41,6 +49,60 @@ function AddEventForm() {
     }));
   }, []);
 
+  // Load event data if editing
+  useEffect(() => {
+    const loadEventData = async () => {
+      if (isEditMode) {
+        try {
+          let eventData = eventToEdit;
+
+          // If we don't have event data in state, fetch it
+          if (!eventData && eventId) {
+            setLoading(true);
+            const response = await eventService.getEventById(eventId);
+            if (response.success) {
+              eventData = response.dto;
+            } else {
+              setMessage({ text: "Failed to load event data", type: "error" });
+              return;
+            }
+          }
+
+          if (eventData) {
+            // Convert OffsetDateTime to datetime-local format
+            const eventDate = new Date(eventData.eventDateTime);
+            const localDateTime = new Date(
+              eventDate.getTime() - eventDate.getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .slice(0, 16);
+
+            setFormData({
+              title: eventData.title || "",
+              short_description: eventData.shortDescription || "",
+              long_description: eventData.longDescription || "",
+              organizer_email: loggedInEmail || "",
+              event_datetime: localDateTime,
+              timezone: eventData.timezone || userTimezone,
+              event_type: eventData.eventType || "online",
+              event_link: eventData.eventLink || "",
+              event_location: eventData.eventLocation || "",
+              tags: eventData.tags || "",
+              duration: eventData.duration || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error loading event:", error);
+          setMessage({ text: "Failed to load event data", type: "error" });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadEventData();
+  }, [isEditMode, eventId, eventToEdit, userTimezone]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -49,21 +111,10 @@ function AddEventForm() {
     }));
   };
 
-  /**
-   * Converts the datetime-local input to ISO 8601 format with timezone
-   */
   const convertToISO8601 = (datetimeLocal) => {
     if (!datetimeLocal) return "";
-
-    // The datetime-local input gives us a string like "2025-11-22T18:00"
-    // We need to convert this to ISO 8601 with the user's timezone offset
-
-    // Create a date object in the user's local timezone
     const date = new Date(datetimeLocal);
-
-    // Get the ISO string (this is in UTC)
     const isoString = date.toISOString();
-
     return isoString;
   };
 
@@ -76,7 +127,10 @@ function AddEventForm() {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setMessage({
-        text: "You must be logged in to create an event. Redirecting to login...",
+        text:
+          "You must be logged in to " +
+          (isEditMode ? "edit" : "create") +
+          " an event. Redirecting to login...",
         type: "error",
       });
       setTimeout(() => {
@@ -90,28 +144,54 @@ function AddEventForm() {
       const formattedData = {
         ...formData,
         event_datetime: convertToISO8601(formData.event_datetime),
-        timezone: userTimezone, // Send the actual timezone name
+        timezone: userTimezone,
       };
 
-      const response = await eventService.createEvent(formattedData);
+      if (formattedData.event_type === "online") {
+        formattedData.event_location = null;
+      } else if (formattedData.event_type === "in-person") {
+        formattedData.event_link = null;
+      }
+
+      let response;
+      if (isEditMode) {
+        // Update existing event
+        response = await eventService.updateEvent(
+          eventId || eventToEdit.eventId,
+          formattedData
+        );
+      } else {
+        // Create new event
+        response = await eventService.createEvent(formattedData);
+      }
 
       if (response.success) {
-        setMessage({ text: "Event created successfully! 🎉", type: "success" });
+        setMessage({
+          text: isEditMode
+            ? "Event updated successfully! 🎉"
+            : "Event created successfully! 🎉",
+          type: "success",
+        });
 
-        // Wait 1.5 seconds to show success message, then navigate to dashboard
         setTimeout(() => {
-          navigate("/dashboard");
+          if (isEditMode) {
+            // Navigate back to event details page
+            navigate(`/events/${eventId || eventToEdit.eventId}`);
+          } else {
+            // Navigate to dashboard
+            navigate("/dashboard");
+          }
         }, 1500);
-
-        //don't reset the form since user is being redirected
       } else {
         setMessage({
-          text: response.message || "Failed to create event",
+          text:
+            response.message ||
+            (isEditMode ? "Failed to update event" : "Failed to create event"),
           type: "error",
         });
       }
     } catch (error) {
-      console.error("❌ Error in handleSubmit:", error);
+      console.error("Error in handleSubmit:", error);
       setMessage({ text: "Error: " + error.message, type: "error" });
     } finally {
       setLoading(false);
@@ -120,7 +200,7 @@ function AddEventForm() {
 
   return (
     <div className="create-event-container">
-      <h2>Create New Event 🌸</h2>
+      <h2>{isEditMode ? "Edit Event ✏️" : "Create New Event 🌸"}</h2>
 
       {message.text && (
         <div className={`message ${message.type}`}>{message.text}</div>
@@ -129,7 +209,7 @@ function AddEventForm() {
       <form onSubmit={handleSubmit} className="event-form">
         {/* Event Title */}
         <div className="form-group">
-          <label htmlFor="title">Event Title *</label>
+          <label htmlFor="title">Event Title</label>
           <input
             type="text"
             id="title"
@@ -143,35 +223,34 @@ function AddEventForm() {
 
         {/* Description */}
         <div className="form-group">
-          <label htmlFor="description">Description *</label>
+          <label htmlFor="short_description">Description</label>
           <textarea
-            id="description"
-            name="description"
-            value={formData.description}
+            id="short_description"
+            name="short_description"
+            value={formData.short_description}
             onChange={handleChange}
             required
             rows="4"
-            placeholder="Tell us about your event..."
+            placeholder="Share a short intro about your event (you can add more details after creating it)."
           />
         </div>
-
-        {/* Organizer Email */}
-        <div className="form-group">
-          <label htmlFor="organizer_email">Organizer Email *</label>
-          <input
-            type="email"
-            id="organizer_email"
-            name="organizer_email"
-            value={formData.organizer_email}
-            onChange={handleChange}
-            required
-            placeholder="organizer@example.com"
-          />
-        </div>
+        {isEditMode && (
+          <div className="form-group">
+            <label htmlFor="long_description">Additional Event Details</label>
+            <textarea
+              id="long_description"
+              name="long_description"
+              value={formData.long_description}
+              onChange={handleChange}
+              rows="6"
+              placeholder="Add more details about your event..."
+            />
+          </div>
+        )}
 
         {/* Event Date & Time */}
         <div className="form-group">
-          <label htmlFor="event_datetime">Event Date & Time *</label>
+          <label htmlFor="event_datetime">Event Date & Time</label>
           <input
             type="datetime-local"
             id="event_datetime"
@@ -181,7 +260,7 @@ function AddEventForm() {
             required
           />
           <small className="helper-text">
-            🌍 Time will be in your timezone: <strong>{timezoneAbbr}</strong> (
+           <strong>{timezoneAbbr}</strong> (
             {userTimezone})
           </small>
         </div>
@@ -191,7 +270,7 @@ function AddEventForm() {
 
         {/* Event Type */}
         <div className="form-group">
-          <label htmlFor="event_type">Event Type *</label>
+          <label htmlFor="event_type">Event Type</label>
           <select
             id="event_type"
             name="event_type"
@@ -203,6 +282,35 @@ function AddEventForm() {
             <option value="in-person">In-Person</option>
           </select>
         </div>
+
+        {/* Event Link / Location */}
+        {formData.event_type === "online" ? (
+          <div className="form-group">
+            <label htmlFor="event_link">Event Link (Online)</label>
+            <input
+              type="url"
+              id="event_link"
+              name="event_link"
+              value={formData.event_link}
+              onChange={handleChange}
+              placeholder="https://zoom.com/meeting (you can add this later also)"
+              
+            />
+          </div>
+        ) : (
+          <div className="form-group">
+            <label htmlFor="event_location">Event Location (In-Person)</label>
+            <input
+              type="text"
+              id="event_location"
+              name="event_location"
+              value={formData.event_location}
+              onChange={handleChange}
+              placeholder="123 Street, City, Country"
+              required
+            />
+          </div>
+        )}
 
         {/* Host Email */}
         <div className="form-group">
@@ -244,19 +352,27 @@ function AddEventForm() {
           />
           <small className="helper-text">Separate tags with commas</small>
         </div>
-        <button
-          type="button"
-          className="cancel-button"
-          onClick={() => navigate("/dashboard")}
-          disabled={isLoading}
-        >
-          Cancel
-        </button>
 
-        {/* Submit Button */}
-        <button type="submit" className="submit-button" disabled={isLoading}>
-          {isLoading ? "Creating Event..." : "Create Event 🎉"}
-        </button>
+        <div className="form-actions">
+          <button
+            type="button"
+            className="cancel-button"
+            onClick={() => (isEditMode ? navigate(-1) : navigate("/dashboard"))}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading
+              ? isEditMode
+                ? "Updating Event..."
+                : "Creating Event..."
+              : isEditMode
+              ? "Update Event ✏️"
+              : "Create Event 🎉"}
+          </button>
+        </div>
       </form>
     </div>
   );
