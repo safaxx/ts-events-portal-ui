@@ -104,3 +104,87 @@
     font-size: 14px;
   }
 }
+
+/* Avatar circle */
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  background: var(--ts-primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  user-select: none;
+}
+
+.user-avatar:hover {
+  background: var(--ts-secondary);
+}
+
+/* Dropdown menu */
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  background: white;
+  border-radius: 10px;
+  width: 220px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(15, 51, 99, 0.15);
+  border: 1px solid var(--ts-light-blue);
+  animation: fadeIn 0.2s ease-out;
+  z-index: 2000;
+}
+
+.dropdown-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ts-primary);
+  margin-bottom: 4px;
+  font-family: "Poppins", sans-serif;
+}
+
+.dropdown-email {
+  font-size: 0.85rem;
+  color: var(--ts-text);
+  margin-bottom: 12px;
+  font-family: "Poppins", sans-serif;
+}
+
+.dropdown-logout {
+  width: 100%;
+  padding: 10px;
+  background: var(--ts-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+.dropdown-logout:hover {
+  background: var(--ts-secondary);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

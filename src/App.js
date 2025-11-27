@@ -11,14 +11,22 @@ import EventDetailsPage from "./components/Events/EventDetailsPage.jsx";
 function App() {
   return (
     <BrowserRouter>
-      <NavBar /> {/* 👈 appears on every route */}
+      <NavBar /> 
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/my-events" element={<MyEventsPage />} />
           <Route path="/events/:eventId" element={<EventDetailsPage />} />
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+          <Route
+            path="/my-events"
+            element={
+              <ProtectedRoute>
+                <MyEventsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/create-event"
             element={
@@ -27,7 +35,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+          <Route
+            path="/edit-event/:eventId"
+            element={
+              <ProtectedRoute>
+                <AddEventForm />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
     </BrowserRouter>

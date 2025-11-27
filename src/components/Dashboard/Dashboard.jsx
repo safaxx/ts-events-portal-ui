@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { convertToUserTimezone } from "../../utils/TimeZoneUtils";
 import EventCard from "../Events/EventCard/EventCard";
 import eventService from "../Services/EventService";
-import "./Dashboard.css";
+import { getEventEnd, convertToUserTimezone } from "../../utils/TimeZoneUtils";
+import { Search } from "lucide-react";
 
 function Dashboard() {
   const [allEvents, setAllEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [activeTab, setActiveTab] = useState("upcoming"); // "upcoming" | "past"
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -52,10 +52,15 @@ function Dashboard() {
 
   const filteredEvents = allEvents
     .filter((event) => {
-      const eventDate = convertToUserTimezone(event.eventDateTime);
-      return activeTab === "upcoming" ? eventDate >= now : eventDate < now;
-    })
-    .filter(matchesSearch)
+      const eventStart = convertToUserTimezone(event.eventDateTime);
+      const eventEnd = getEventEnd(event);
+
+      if (!eventEnd) return true; // edge case
+
+      return activeTab === "upcoming"
+        ? eventEnd >= now // still upcoming if end time is in future
+        : eventEnd < now; // past only if end time is in past
+    }).filter(matchesSearch)
     .sort((a, b) => {
       const dateA = convertToUserTimezone(a.eventDateTime);
       const dateB = convertToUserTimezone(b.eventDateTime);
@@ -63,13 +68,6 @@ function Dashboard() {
         ? dateA - dateB // soonest first
         : dateB - dateA; // recent past first
     });
-
-  const upcomingCount = allEvents.filter((event) => {
-    const eventDate = convertToUserTimezone(event.eventDateTime);
-    return eventDate >= new Date();
-  }).length;
-
-  const pastCount = allEvents.length - upcomingCount;
 
   // LOADING UI
   if (isLoading) {
@@ -143,7 +141,7 @@ function Dashboard() {
               activeTab === "upcoming" ? "active" : ""
             }`}
           >
-            Upcoming ({upcomingCount})
+            Upcoming
           </button>
 
           <button
@@ -152,7 +150,7 @@ function Dashboard() {
               activeTab === "past" ? "active" : ""
             }`}
           >
-            Past ({pastCount})
+            Past
           </button>
         </div>
       </div>

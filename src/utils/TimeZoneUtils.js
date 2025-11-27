@@ -16,7 +16,13 @@ export const convertToUserTimezone = (isoDateTimeString) => {
   return new Date(isoDateTimeString);
 };
 
+export const getEventEnd = (event) => {
+  if (!event.eventDateTime || !event.duration) return null;
 
+  const start = convertToUserTimezone(event.eventDateTime); // existing helper you already use
+  return new Date(start.getTime() + event.duration * 60000);
+};
+ 
 /**
  * Formats a datetime for display
  * @param {string} isoDateTimeString - ISO datetime from backend
@@ -134,7 +140,7 @@ export const getTimeUntilEvent = (isoDateTimeString) => {
   
   if (diffDays > 0) return `In ${diffDays} day${diffDays > 1 ? 's' : ''}`;
   if (diffHours > 0) return `In ${diffHours} hour${diffHours > 1 ? 's' : ''}`;
-  if (diffMinutes > 0) return `In ${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`;
+  if (diffMinutes > 0) return `In ${diffMinutes} min${diffMinutes > 1 ? 's' : ''}`;
   
   return 'Starting soon!';
 };

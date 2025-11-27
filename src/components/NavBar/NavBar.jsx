@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../../components/Services/AuthService";
 import "./NavBar.css";
@@ -6,6 +6,11 @@ import "./NavBar.css";
 function NavBar() {
   const nav = useNavigate();
   const isAuthed = authService.isAuthenticated();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const userName = localStorage.getItem("name");
+  const userEmail = localStorage.getItem("email");
 
   const handleLogout = () => {
     authService.logout();
@@ -20,30 +25,39 @@ function NavBar() {
           alt="Tech Sisters logo"
           className="topbar__logo"
         />
-        
       </div>
 
       <nav className="topbar__nav">
-        {/* Always visible */}
         <button className="topbar__link" onClick={() => nav("/create-event")}>
           Create Event
         </button>
 
-        {/* Visible only when logged in */}
         {isAuthed && (
           <button className="topbar__link" onClick={() => nav("/my-events")}>
             My Events
           </button>
         )}
 
-        {/* Login / Logout */}
+        {/* USER AVATAR DROPDOWN */}
         {isAuthed ? (
-          <button
-            className="topbar__link topbar__logout"
-            onClick={handleLogout}
-          >
-            Log out
-          </button>
+          <div className="user-menu-wrapper">
+            <div
+              className="user-avatar"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {userName?.charAt(0).toUpperCase() || "U"}
+            </div>
+
+            {menuOpen && (
+              <div className="user-dropdown">
+                <p className="dropdown-name">{userName}</p>
+                <p className="dropdown-email">{userEmail}</p>
+                <button className="dropdown-logout" onClick={handleLogout}>
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <button className="topbar__link" onClick={() => nav("/login")}>
             Log in

@@ -89,6 +89,10 @@ export default function EventDetailsPage() {
   // build share URL (optional)
   const eventUrl = `${window.location.origin}/events/${event.eventId}`;
 
+  const handleEdit = () => {
+    navigate(`/edit-event/${eventId}`, { state: { event } });
+  };
+
   return (
     <div className="event-details-page-root">
       <div className="event-details-inner">
@@ -130,7 +134,7 @@ export default function EventDetailsPage() {
           <section className="overview">
             <h2 className="section-heading">Overview</h2>
             <p className="overview-text">
-              {event.short_description || event.description || ""}
+              {event.shortDescription || event.short_description || ""}
             </p>
 
             {/* long description if present */}
@@ -172,10 +176,7 @@ export default function EventDetailsPage() {
         <aside className="event-right">
           <div className="right-card simple-actions">
             {isCreator && (
-              <button
-                className="action-btn edit-btn"
-                onClick={() => navigate(`/events/${event.eventId}/edit`)}
-              >
+              <button className="action-btn edit-btn" onClick={handleEdit}>
                 Edit Event
               </button>
             )}
