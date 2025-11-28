@@ -1,0 +1,31 @@
+/* In your CSS file (e.g., Button.css) */
+.button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: rgba(79,130,230,.133);
+  color: rgb(30, 115, 243);
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 16px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.button-link:hover {
+  background-color: rgba(79, 129, 230, 0.273);
+  border-color: #0056b3;
+  color: #0056b3;
+}
+
+.btn-calendar-text{
+     
+    float: right;
+    margin-left: 1rem;
+    margin-top: 0.4rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+
+}
