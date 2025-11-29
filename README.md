@@ -25,6 +25,10 @@ With Gatherly, users can:
 - **PostgreSQL** – Database  
 - **Deployment** – Render
 
+#### AI Code Assist tools used:
+- Gemini
+- Claude AI
+
 ---
 
 ## 👩‍💻 The Team
