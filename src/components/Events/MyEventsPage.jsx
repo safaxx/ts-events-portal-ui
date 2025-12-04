@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import eventService from "../../components/Services/EventService";
-import "./MyEventsPage.css";
+import LoadingComponent from "../Loading/LoadingComponent";
 import EventCard from "./EventCard/EventCard";
+import "./MyEventsPage.css";
 
 export default function MyEventsPage() {
   const [activeTab, setActiveTab] = useState("rsvps"); // "rsvps" | "created"
@@ -30,7 +31,11 @@ export default function MyEventsPage() {
     loadData();
   }, []);
 
-  if (loading) return <div className="loading">Loading events...</div>;
+  if (loading) return (
+      <div className="dashboard-container">
+        <LoadingComponent />
+      </div>
+    );
 
   const activeList = activeTab === "created" ? myCreatedEvents : myRsvps;
 
