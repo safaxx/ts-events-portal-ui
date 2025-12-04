@@ -14,11 +14,9 @@
   justify-content: space-between;
   padding: 1rem 2rem;
   background: #FDD9D9;
-  box-shadow: 0 2px 8px rgba(15, 51, 99, 0.08);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 2px solid var(--ts-light-blue);
 }
 
 .topbar__brand {
