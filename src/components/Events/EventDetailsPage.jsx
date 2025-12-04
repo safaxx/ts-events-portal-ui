@@ -9,6 +9,7 @@ import {
   getTimezoneAbbreviation,
 } from "../../utils/TimeZoneUtils";
 import GoogleCalendarEventButton from "../Account/GoogleAuth/GoogleCalendarEventButton";
+import LoadingComponent from "../Loading/LoadingComponent";
 import "./EventDetailsPage.css";
 
 export default function EventDetailsPage() {
@@ -67,7 +68,11 @@ export default function EventDetailsPage() {
     }
   };
 
-  if (loading) return <div className="event-details-loading">Loading...</div>;
+  if (loading) return (
+      <div className="dashboard-container">
+        <LoadingComponent />
+      </div>
+    );
   if (!event)
     return <div className="event-details-loading">Event not found</div>;
 
