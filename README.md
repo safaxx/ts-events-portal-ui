@@ -24,11 +24,6 @@ With Gatherly, users can:
 - **React.js** – Frontend interface  
 - **PostgreSQL** – Database  
 - **Deployment** – Render
-
-#### AI Code Assist tools used:
-- Gemini
-- Claude AI
-
 ---
 
 ## 👩‍💻 The Team
