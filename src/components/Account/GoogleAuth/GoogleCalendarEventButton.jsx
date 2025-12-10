@@ -8,11 +8,11 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const CONNECT_ENDPOINT = "/public/events/add-google-calendar-event";
 const RETURN_URL = window.location;
 
-const GoogleCalendarEventButton = ({ eventId }) => {
+const GoogleCalendarEventButton = ({ eventLink }) => {
   const userEmail = authService.getUserEmail();
 
   // The full URL the user will be redirected to
-  const fullConnectUrl = `${API_BASE_URL}${CONNECT_ENDPOINT}?email=${userEmail}&eventId=${eventId}&returnUrl=${RETURN_URL}`;
+  const fullConnectUrl = `${eventLink}`;
 
   return (
     <div style={{ textAlign: "center" }}>

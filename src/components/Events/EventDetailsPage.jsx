@@ -220,9 +220,9 @@ export default function EventDetailsPage() {
               Share Event
             </button>
 
-            {authService.isAuthenticated() && (
-              <GoogleCalendarEventButton eventId={event.eventId} />
-            )}
+            
+              <GoogleCalendarEventButton eventLink={event.googleCalendarLink} />
+           
           </div>
         </aside>
       </div>
