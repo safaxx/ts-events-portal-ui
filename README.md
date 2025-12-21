@@ -6,9 +6,9 @@ across time zones and busy schedules — without the usual confusion of event pl
 
 ---
 
-## 💡 What the Portal Does
+## 💡 With Events Portal, users can:
 
-With Gatherly, users can:
+
 - 🗓️ Create and manage events with a clear title, description, and tags  
 - ⏰ Set the date, time, and timezone — so everyone’s on the same page  
 - 🌍 View event times converted automatically to their local timezone  
