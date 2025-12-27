@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { convertToUserTimezone, getEventEnd } from "../../utils/TimeZoneUtils";
 import EventCard from "../Events/EventCard/EventCard";
@@ -14,19 +14,28 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("upcoming"); // "upcoming" | "past"
   const [searchQuery, setSearchQuery] = useState("");
 
+   // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+
+
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [currentPage, pageSize]); // Refetch when page or size changes
 
   const fetchEvents = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await eventService.getAllEvents();
+      const response = await eventService.getAllEvents(currentPage, pageSize);
 
       if (response.success && response.events) {
         setAllEvents(response.events);
+        setTotalPages(response.totalPages || 0);
+        setTotalElements(response.totalElements || 0);
       } else {
         setError(response.message || "No events found");
       }
@@ -70,6 +79,23 @@ function Dashboard() {
         ? dateA - dateB // soonest first
         : dateB - dateA; // recent past first
     });
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setCurrentPage(0); // Reset to first page when changing page size
+  };
 
   // LOADING UI
   if (isLoading) {
@@ -154,7 +180,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* No results */}
+      {/* Events Grid */}
       {filteredEvents.length === 0 ? (
         <div className="empty-filtered-state">
           <p className="empty-message">
@@ -164,11 +190,70 @@ function Dashboard() {
           </p>
         </div>
       ) : (
-        <div className="events-grid">
-          {filteredEvents.map((event) => (
-            <EventCard key={event.eventId} event={event} />
-          ))}
-        </div>
+        <>
+          <div className="events-grid">
+            {filteredEvents.map((event) => (
+              <EventCard key={event.eventId} event={event} />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="pagination-container">
+            <div className="pagination-info">
+              <span>
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              <div className="page-size-selector">
+                <label htmlFor="pageSize">Items per page:</label>
+                <select
+                  id="pageSize"
+                  value={pageSize}
+                  onChange={handlePageSizeChange}
+                  className="page-size-select"
+                >
+                  <option value="6">6</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                 
+                </select>
+              </div>
+            </div>
+
+            <div className="pagination-controls">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 0}
+                className="pagination-button"
+              >
+                <ChevronLeft size={20} />
+                Previous
+              </button>
+              
+              <div className="page-numbers">
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(index)}
+                    className={`page-number ${
+                      currentPage === index ? "active" : ""
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages - 1}
+                className="pagination-button"
+              >
+                Next
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

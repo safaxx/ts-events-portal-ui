@@ -34,7 +34,8 @@ body {
 .main-content {
   padding-top: 1rem;
   min-height: calc(100vh - 80px);
-  background: #fff;
+   background: linear-gradient(135deg, var(--ts-accent) 0%, var(--ts-light-blue) 100%);
+
 }
 
 /* Typography */
