@@ -8,6 +8,8 @@
   --ts-pink: #FDD9D9;         /* Light pink */
 }
 
+
+
 .create-event-container {
   max-width: 700px;
   margin: 60px auto;
@@ -240,3 +242,22 @@
     width: 100%;
   }
 }
+
+
+.error-message {
+  color: #d93025;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: #dc2626 !important;
+  border-width: 2px;
+}
+

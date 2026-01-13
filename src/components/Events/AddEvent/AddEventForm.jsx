@@ -1,38 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import "./AddEventForm.css";
-import eventService from "../../Services/EventService";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  getUserTimezone,
   getTimezoneAbbreviation,
+  getUserTimezone,
 } from "../../../utils/TimeZoneUtils";
+import eventService from "../../Services/EventService";
+import "./AddEventForm.css";
 
 function AddEventForm() {
   const navigate = useNavigate();
-  const { eventId } = useParams(); // Get eventId from URL if editing
+  const { eventId } = useParams();
   const location = useLocation();
   const [userTimezone, setUserTimezone] = useState(getUserTimezone());
   const [timezoneAbbr, setTimezoneAbbr] = useState("");
   const loggedInEmail = localStorage.getItem("email");
-  // Determine if we're editing based on URL params or location state
   const isEditMode = Boolean(eventId) || location.state?.event;
   const eventToEdit = location.state?.event;
 
-  const [formData, setFormData] = useState({
-    title: "",
-    short_description: "",
-    long_description: "",
-    organizer_email: "",
-    event_datetime: "",
-    timezone: "",
-    event_type: "online",
-    event_link: "",
-    event_host_name: "",
-    event_host_email: "",
-    event_location: "",
-    tags: "",
-    duration: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+    setValue,
+  } = useForm({
+    mode: "onChange", // Instant validation
+    defaultValues: {
+      title: "",
+      short_description: "",
+      long_description: "",
+      organizer_email: "",
+      event_datetime: "",
+      timezone: "",
+      event_type: "online",
+      event_link: "",
+      event_host_name: "",
+      event_host_email: "",
+      event_location: "",
+      tags: "",
+      duration: "",
+    },
   });
+
+  // Watch event_type to show/hide fields
+  const eventType = watch("event_type");
 
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -43,13 +56,8 @@ function AddEventForm() {
     const abbr = getTimezoneAbbreviation(tz);
     setUserTimezone(tz);
     setTimezoneAbbr(abbr);
-
-    // Pre-fill timezone in form
-    setFormData((prev) => ({
-      ...prev,
-      timezone: tz,
-    }));
-  }, []);
+    setValue("timezone", tz);
+  }, [setValue]);
 
   // Load event data if editing
   useEffect(() => {
@@ -58,7 +66,6 @@ function AddEventForm() {
         try {
           let eventData = eventToEdit;
 
-          // If we don't have event data in state, fetch it
           if (!eventData && eventId) {
             setLoading(true);
             const response = await eventService.getEventById(eventId);
@@ -71,7 +78,6 @@ function AddEventForm() {
           }
 
           if (eventData) {
-            // Convert OffsetDateTime to datetime-local format
             const eventDate = new Date(eventData.eventDateTime);
             const localDateTime = new Date(
               eventDate.getTime() - eventDate.getTimezoneOffset() * 60000
@@ -79,7 +85,7 @@ function AddEventForm() {
               .toISOString()
               .slice(0, 16);
 
-            setFormData({
+            reset({
               title: eventData.title || "",
               short_description: eventData.shortDescription || "",
               long_description: eventData.longDescription || "",
@@ -105,36 +111,24 @@ function AddEventForm() {
     };
 
     loadEventData();
-  }, [isEditMode, eventId, eventToEdit, userTimezone]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  }, [isEditMode, eventId, eventToEdit, userTimezone, reset, loggedInEmail]);
 
   const convertToISO8601 = (datetimeLocal) => {
     if (!datetimeLocal) return "";
     const date = new Date(datetimeLocal);
-    const isoString = date.toISOString();
-    return isoString;
+    return date.toISOString();
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
     setMessage({ text: "", type: "" });
 
-    // Check if user is logged in
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setMessage({
-        text:
-          "You must be logged in to " +
-          (isEditMode ? "edit" : "create") +
-          " an event. Redirecting to login...",
+        text: `You must be logged in to ${
+          isEditMode ? "edit" : "create"
+        } an event. Redirecting to login...`,
         type: "error",
       });
       setTimeout(() => {
@@ -146,8 +140,8 @@ function AddEventForm() {
 
     try {
       const formattedData = {
-        ...formData,
-        event_datetime: convertToISO8601(formData.event_datetime),
+        ...data,
+        event_datetime: convertToISO8601(data.event_datetime),
         timezone: userTimezone,
       };
 
@@ -159,13 +153,11 @@ function AddEventForm() {
 
       let response;
       if (isEditMode) {
-        // Update existing event
         response = await eventService.updateEvent(
           eventId || eventToEdit.eventId,
           formattedData
         );
       } else {
-        // Create new event
         response = await eventService.createEvent(formattedData);
       }
 
@@ -179,10 +171,8 @@ function AddEventForm() {
 
         setTimeout(() => {
           if (isEditMode) {
-            // Navigate back to event details page
             navigate(`/events/${eventId || eventToEdit.eventId}`);
           } else {
-            // Navigate to dashboard
             navigate("/dashboard");
           }
         }, 1500);
@@ -216,7 +206,6 @@ function AddEventForm() {
 
       if (response.success) {
         setMessage({ text: "Event deleted successfully 🗑️", type: "success" });
-
         setTimeout(() => {
           navigate("/dashboard");
         }, 1200);
@@ -244,19 +233,30 @@ function AddEventForm() {
         <div className={`message ${message.type}`}>{message.text}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="event-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="event-form">
         {/* Event Title */}
         <div className="form-group">
           <label htmlFor="title">Event Title</label>
           <input
             type="text"
             id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
             placeholder="e.g., Tech Sisters Meetup"
+            className={errors.title ? "error" : ""}
+            {...register("title", {
+              required: "Event title is required",
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 characters",
+              },
+              maxLength: {
+                value: 120,
+                message: "Title must not exceed 120 characters",
+              },
+            })}
           />
+          {errors.title && (
+            <span className="error-message">{errors.title.message}</span>
+          )}
         </div>
 
         {/* Description */}
@@ -264,24 +264,32 @@ function AddEventForm() {
           <label htmlFor="short_description">Description</label>
           <textarea
             id="short_description"
-            name="short_description"
-            value={formData.short_description}
-            onChange={handleChange}
-            required
             rows="4"
             placeholder="Share a short intro about your event (you can add more details after creating it)."
+            className={errors.short_description ? "error" : ""}
+            {...register("short_description", {
+              required: "Short description is required",
+              maxLength: {
+                value: 200,
+                message: "Short description must not exceed 200 characters",
+              },
+            })}
           />
+          {errors.short_description && (
+            <span className="error-message">
+              {errors.short_description.message}
+            </span>
+          )}
         </div>
+
         {isEditMode && (
           <div className="form-group">
             <label htmlFor="long_description">Additional Event Details</label>
             <textarea
               id="long_description"
-              name="long_description"
-              value={formData.long_description}
-              onChange={handleChange}
               rows="6"
               placeholder="Add more details about your event..."
+              {...register("long_description")}
             />
           </div>
         )}
@@ -292,28 +300,29 @@ function AddEventForm() {
           <input
             type="datetime-local"
             id="event_datetime"
-            name="event_datetime"
-            value={formData.event_datetime}
-            onChange={handleChange}
-            required
+            {...register("event_datetime", {
+              required: "Event date and time is required",
+            })}
           />
           <small className="helper-text">
             <strong>{timezoneAbbr}</strong> ({userTimezone})
           </small>
+          {errors.event_datetime && (
+            <span className="error-message">
+              {errors.event_datetime.message}
+            </span>
+          )}
         </div>
 
-        {/* Timezone - Now auto-detected and hidden */}
-        <input type="hidden" name="timezone" value={formData.timezone} />
+        {/* Timezone - Hidden */}
+        <input type="hidden" {...register("timezone")} />
 
         {/* Event Type */}
         <div className="form-group">
           <label htmlFor="event_type">Event Type</label>
           <select
             id="event_type"
-            name="event_type"
-            value={formData.event_type}
-            onChange={handleChange}
-            required
+            {...register("event_type", { required: true })}
           >
             <option value="online">Online</option>
             <option value="in-person">In-Person</option>
@@ -321,17 +330,29 @@ function AddEventForm() {
         </div>
 
         {/* Event Link / Location */}
-        {formData.event_type === "online" ? (
+        {eventType === "online" ? (
           <div className="form-group">
             <label htmlFor="event_link">Event Link (Online)</label>
             <input
               type="url"
               id="event_link"
-              name="event_link"
-              value={formData.event_link}
-              onChange={handleChange}
               placeholder="https://zoom.com/meeting (you can add this later also)"
+              {...register("event_link", {
+                validate: {
+                  startsWithHttp: (value) => {
+                    if (!value) return true;
+                    return (
+                      value.startsWith("http://") ||
+                      value.startsWith("https://") ||
+                      "URL must start with http:// or https://"
+                    );
+                  },
+                },
+              })}
             />
+            {errors.event_link && (
+              <span className="error-message">{errors.event_link.message}</span>
+            )}
           </div>
         ) : (
           <div className="form-group">
@@ -339,12 +360,19 @@ function AddEventForm() {
             <input
               type="text"
               id="event_location"
-              name="event_location"
-              value={formData.event_location}
-              onChange={handleChange}
               placeholder="123 Street, City, Country"
-              required
+              {...register("event_location", {
+                required:
+                  eventType === "in-person"
+                    ? "Location is required for in-person events"
+                    : false,
+              })}
             />
+            {errors.event_location && (
+              <span className="error-message">
+                {errors.event_location.message}
+              </span>
+            )}
           </div>
         )}
 
@@ -354,23 +382,36 @@ function AddEventForm() {
           <input
             type="email"
             id="event_host_email"
-            name="event_host_email"
-            value={formData.event_host_email}
-            onChange={handleChange}
             placeholder="host@example.com"
+            {...register("event_host_email", {
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address",
+              },
+            })}
           />
+          {errors.event_host_email && (
+            <span className="error-message">
+              {errors.event_host_email.message}
+            </span>
+          )}
         </div>
+
         <div className="form-group">
           <label htmlFor="event_host_name">Event Host Name</label>
           <input
             type="text"
             id="event_host_name"
-            name="event_host_name"
-            value={formData.event_host_name}
-            onChange={handleChange}
             placeholder="Rayhana Rahman"
-            required
+            {...register("event_host_name", {
+              required: "Host name is required",
+            })}
           />
+          {errors.event_host_name && (
+            <span className="error-message">
+              {errors.event_host_name.message}
+            </span>
+          )}
         </div>
 
         {/* Duration */}
@@ -379,12 +420,18 @@ function AddEventForm() {
           <input
             type="number"
             id="duration"
-            name="duration"
-            value={formData.duration}
-            onChange={handleChange}
             placeholder="e.g., 60"
             min="1"
+            {...register("duration", {
+              min: {
+                value: 10,
+                message: "Duration must be at least 10 minutes",
+              },
+            })}
           />
+          {errors.duration && (
+            <span className="error-message">{errors.duration.message}</span>
+          )}
         </div>
 
         {/* Tags */}
@@ -393,12 +440,16 @@ function AddEventForm() {
           <input
             type="text"
             id="tags"
-            name="tags"
-            value={formData.tags}
-            onChange={handleChange}
             placeholder="e.g., AI, Tech, Community"
+            {...register("tags", {
+              pattern: { value: /^[\w-]+(?:,\s*[\w-]+)*$/, message: "Tags cannot have trailing commas" },
+            })}
           />
           <small className="helper-text">Separate tags with commas</small>
+          
+          {errors.tags && (
+            <span className="error-message">{errors.tags.message}</span>
+          )}
         </div>
 
         <div className="form-actions">
