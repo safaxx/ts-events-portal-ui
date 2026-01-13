@@ -1,0 +1,30 @@
+.calendar-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 14px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
+
+  background: #eaf0ff; /* same vibe as others */
+  color: var(--ts-primary);
+  text-decoration: none;
+}
+
+.calendar-btn:hover {
+  background: #dae4ff;
+}
+
+/* Smaller logo */
+.calendar-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}

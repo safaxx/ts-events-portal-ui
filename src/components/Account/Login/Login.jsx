@@ -12,15 +12,44 @@ import {
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import authService from "../../Services/AuthService";
 import "./Login.css";
+import OpenArmsGirl from "./OpenArmsGirl.jsx";
+import VSignGirl from "./VSignGirl.jsx";
+import WavingGirl from "./WavingGirl.jsx";
 
 function Login() {
   const OTP_COUNTDOWN_SECONDS = 30;
 
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [error, setError] = useState({ isError: false, message: "" });
+
+  const validateEmail = (value) => {
+    // 1. Required Check
+    if (!value) {
+      return { isError: true, message: "Email is required" };
+    }
+
+    // 2. Format Check (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return { isError: true, message: "Invalid email format" };
+    }
+
+    return { isError: false, message: "" };
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    // Clear error while typing or validate on the fly
+    if (error.isError) {
+      setError(validateEmail(value));
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -53,44 +82,51 @@ function Login() {
   }, [countdown]); // This effect runs whenever 'countdown' changes
 
   const handleSendOtp = async () => {
-    setIsSending(true);
-    setAlertInfo({ show: false, message: "" }); // Clear any old alerts
+    // Validate input
+    const validation = validateEmail(email);
+    setError(validation);
 
-    try {
-      const response = await authService.sendOtp(email);
+    if (!validation.isError) {
+      console.log("Form Submitted:", email);
 
-      const isSuccess = response.data.success;
+      setIsSending(true);
+      setAlertInfo({ show: false, message: "" }); // Clear any old alerts
 
-      setAlertInfo({
-        show: true,
-        severity: isSuccess ? "success" : "error",
-        message:
-          response.data.message ||
-          (isSuccess
-            ? "An OTP has been sent to your email."
-            : "Failed to send OTP. Please try again."),
-      });
+      try {
+        const response = await authService.sendOtp(email);
+        const isSuccess = response.data.success;
 
-      if (!isSuccess) {
-        return; // Stop here, don't show the OTP field
+        setAlertInfo({
+          show: true,
+          severity: isSuccess ? "success" : "error",
+          message:
+            response.data.message ||
+            (isSuccess
+              ? "An OTP has been sent to your email."
+              : "Failed to send OTP. Please try again."),
+        });
+
+        if (!isSuccess) {
+          return; // Stop here, don't show the OTP field
+        }
+
+        setOtpSent(true);
+
+        // Start the countdown on success
+        setCountdown(OTP_COUNTDOWN_SECONDS);
+      } catch (error) {
+        console.error(error);
+
+        // Set an error alert
+        setAlertInfo({
+          show: true,
+          severity: "error",
+          message: error.message || "Failed to send OTP. Please try again.",
+        });
+      } finally {
+        // 5. This runs whether it succeeds or fails
+        setIsSending(false);
       }
-
-      setOtpSent(true);
-
-      // Start the countdown on success
-      setCountdown(OTP_COUNTDOWN_SECONDS);
-    } catch (error) {
-      console.error(error);
-
-      // Set an error alert
-      setAlertInfo({
-        show: true,
-        severity: "error",
-        message: error.message || "Failed to send OTP. Please try again.",
-      });
-    } finally {
-      // 5. This runs whether it succeeds or fails
-      setIsSending(false);
     }
   };
 
@@ -116,14 +152,11 @@ function Login() {
           severity: "error",
           message:
             response.data.message ||
-             "Error in authentication. Please try again.",
+            "Error in authentication. Please try again.",
         });
-      }else{
-        navigate('/dashboard');
+      } else {
+        navigate("/dashboard");
       }
-
-      
-     
     } catch (error) {
       console.error(error);
 
@@ -133,7 +166,7 @@ function Login() {
         severity: "error",
         message: error.message || "Failed to login. Please try again.",
       });
-    } 
+    }
   };
 
   // Define the style for each input box for OTP
@@ -148,16 +181,21 @@ function Login() {
   };
 
   return (
-    
     <motion.div
       className="login-container"
       initial={{ opacity: 0, y: -50 }} // Starts transparent and 50px above
       animate={{ opacity: 1, y: 0 }} // Animates to full opacity at its original position
       transition={{ duration: 0.5 }} // Animation takes 0.5 seconds
     >
+     
+        <VSignGirl />
+        <OpenArmsGirl />
+        <WavingGirl />
+     
+
       <Container component="main" maxWidth="xs" className="login-form">
-        
         <CssBaseline />
+
         <Box
           sx={{
             display: "flex",
@@ -205,7 +243,10 @@ function Login() {
               autoComplete="email"
               autoFocus
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
+              onBlur={() => setError(validateEmail(email))} // Validate when user clicks away
+              error={error.isError}
+              helperText={error.message}
               disabled={otpSent} // Optionally disable email field after OTP is sent
               sx={{ mb: 3 }}
               InputProps={{
@@ -213,7 +254,7 @@ function Login() {
                   <InputAdornment position="end">
                     <Button
                       onClick={handleSendOtp}
-                      disabled={isSending || countdown > 0} // Disable if sending or already sent
+                      disabled={isSending || countdown > 0 || error.isError} // Disable if sending or already sent
                     >
                       {getSendOtpBtnText()}
                     </Button>
@@ -255,6 +296,7 @@ function Login() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
+                  disabled={otp.length !== 6}
                 >
                   Sign In
                 </Button>

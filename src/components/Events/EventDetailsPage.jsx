@@ -9,6 +9,7 @@ import {
   getTimezoneAbbreviation,
 } from "../../utils/TimeZoneUtils";
 import GoogleCalendarEventButton from "../Account/GoogleAuth/GoogleCalendarEventButton";
+import DownloadEvent from "../Events/DownloadEvent/DownloadEvent";
 import LoadingComponent from "../Loading/LoadingComponent";
 import "./EventDetailsPage.css";
 
@@ -29,6 +30,7 @@ export default function EventDetailsPage() {
         const res = await eventService.getEventById(eventId);
         const dto = res.dto || res.data || res; // defensive
         setEvent(dto);
+        
 
         const loggedInUser = authService.getUserEmail();
         if (loggedInUser && dto.createdBy === loggedInUser) {
@@ -68,7 +70,10 @@ export default function EventDetailsPage() {
     }
   };
 
-  if (loading) return (
+  console.log("Loaded event: ",event);
+
+  if (loading)
+    return (
       <div className="dashboard-container">
         <LoadingComponent />
       </div>
@@ -87,9 +92,6 @@ export default function EventDetailsPage() {
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
-
-  // sample price display (screenshot shows "Free")
-  const priceLabel = event.price || event.free ? "Free" : event.price || "Free";
 
   // build share URL (optional)
   const eventUrl = `${window.location.origin}/events/${event.eventId}`;
@@ -149,17 +151,7 @@ export default function EventDetailsPage() {
               </div>
             ) : null}
 
-            <a
-              className="read-more-link"
-              onClick={() =>
-                window.scrollTo({
-                  top: document.body.scrollHeight,
-                  behavior: "smooth",
-                })
-              }
-            >
-              Read more
-            </a>
+            
 
             <div className="event-categories">
               <span className="cat-label">Category:</span>
@@ -220,9 +212,8 @@ export default function EventDetailsPage() {
               Share Event
             </button>
 
-            
-              <GoogleCalendarEventButton eventLink={event.googleCalendarLink} />
-           
+            <GoogleCalendarEventButton eventLink={event.googleCalendarLink} />
+            <DownloadEvent eventData={event} />
           </div>
         </aside>
       </div>
