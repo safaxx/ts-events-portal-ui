@@ -12,7 +12,7 @@ function NavBar() {
   const userName = localStorage.getItem("name");
   const userEmail = localStorage.getItem("email");
 
-  const userRoles = JSON.parse(localStorage.getItem("roles") || "[]");
+  const userRoles =localStorage.getItem("roles") || "";
 
   // Check if user has admin role
   const isAdmin = userRoles.includes("ROLE_ADMIN");
