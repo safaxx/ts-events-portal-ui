@@ -32,8 +32,7 @@ Built with 💕 by **Tech Sisters**
 
 | Role | Name | 
 |------|------|
-| 🧑‍💻 Devs | [Safa](https://github.com/safaxx) & [Noor](https://github.com/Noor2005) 
-| 🎨 UI/UX | [Tanareh]()
+| 🧑‍💻 Devs | [Safa](https://github.com/safaxx) & [Noor](https://github.com/Noor2005)
 | 👩‍💼 PM | [Dakota](https://github.com/dbragato) 
 
 ---
