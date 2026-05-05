@@ -1,23 +1,25 @@
 /* Tech Sisters Color Palette */
 :root {
-  --ts-primary: #0F3363;      /* Dark blue - primary */
-  --ts-secondary: #4970A5;    /* Medium blue - secondary */
-  --ts-text: #747474;         /* Gray - text */
-  --ts-accent: #FBF1E8;       /* Beige - accent */
-  --ts-light-blue: #C2D7ED;   /* Light blue */
-  --ts-pink: #FDD9D9;         /* Light pink */
+  --ts-primary: #112250;      /* Deep navy */
+  --ts-secondary: #3c507d;    /* Slate blue */
+  --ts-text: #4f5d75;         /* Muted text */
+  --ts-accent: #e0c58f;       /* Warm gold */
+  --ts-surface: #d9cbc2;      /* Dusty beige */
+  --ts-bg-soft: #f5f0e9;      /* Soft cream */
+  --ts-light-blue: #f7fafc;   /* Light neutral background */
+  --ts-pink: #f6e3dc;         /* Soft blush */
 }
 
 
 
 .create-event-container {
-  max-width: 700px;
+  max-width: 980px;
   margin: 60px auto;
   padding: 40px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(15, 51, 99, 0.08);
-  border: 2px solid var(--ts-light-blue);
+  border-radius: 18px;
+  box-shadow: 0 18px 42px rgba(17, 34, 80, 0.1);
+  border: 1px solid rgba(60, 80, 125, 0.14);
 }
 
 .create-event-container h2 {
@@ -30,14 +32,20 @@
 }
 
 .event-form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  align-items: start;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+
+.form-group--full {
+  grid-column: 1 / -1;
 }
 
 .form-group label {
@@ -52,22 +60,22 @@
 .form-group textarea,
 .form-group select {
   padding: 14px 16px;
-  border: 2px solid var(--ts-light-blue);
-  border-radius: 8px;
+  border: 1px solid rgba(60, 80, 125, 0.22);
+  border-radius: 12px;
   font-size: 15px;
   transition: all 0.3s ease;
   font-family: "Poppins", sans-serif;
-  background: white;
-  color: #404040;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ts-primary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--ts-primary);
-  background: var(--ts-accent);
-  box-shadow: 0 0 0 3px rgba(15, 51, 99, 0.1);
+  border-color: var(--ts-secondary);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(224, 197, 143, 0.28);
 }
 
 .form-group textarea {
@@ -85,12 +93,13 @@
 }
 
 .helper-text strong {
-  color: var(--ts-primary);
+  color: var(--ts-secondary);
 }
 
 /* Form Actions - Buttons Container */
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   margin-top: 16px;
 }
@@ -110,14 +119,14 @@
 
 .submit-button {
   background: var(--ts-primary);
-  color: white;
-  box-shadow: 0 4px 16px rgba(15, 51, 99, 0.3);
+  color: var(--ts-bg-soft);
+  box-shadow: 0 10px 24px rgba(17, 34, 80, 0.22);
 }
 
 .submit-button:hover:not(:disabled) {
   background: var(--ts-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15, 51, 99, 0.4);
+  box-shadow: 0 14px 30px rgba(60, 80, 125, 0.24);
 }
 
 .submit-button:disabled {
@@ -126,14 +135,14 @@
 }
 
 .cancel-button {
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   color: var(--ts-primary);
-  border: 2px solid var(--ts-light-blue);
+  border: 1px solid rgba(60, 80, 125, 0.22);
 }
 
 .cancel-button:hover:not(:disabled) {
-  background: var(--ts-accent);
-  border-color: var(--ts-primary);
+  background: var(--ts-bg-soft);
+  border-color: var(--ts-secondary);
   transform: translateY(-2px);
 }
 
@@ -154,15 +163,15 @@
 }
 
 .message.success {
-  background: var(--ts-accent);
+  background: rgba(224, 197, 143, 0.2);
   color: var(--ts-primary);
-  border: 2px solid var(--ts-light-blue);
+  border: 1px solid rgba(224, 197, 143, 0.6);
 }
 
 .message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 2px solid #f5c2c7;
+  background: #f8e7e1;
+  color: #7a2e1f;
+  border: 1px solid #e5b6a7;
 }
 .delete-button {
   flex: 1;
@@ -175,17 +184,17 @@
   transition: all 0.3s ease;
   font-family: "Poppins", sans-serif;
 
-  background: #ffe5e5;                /* light red background */
-  color: #b30000;                     /* strong red text */
-  border: 2px solid #ffb3b3;          /* soft red border */
-  box-shadow: 0 4px 16px rgba(255, 0, 0, 0.15);
+  background: #f7e3dd;
+  color: #8b2d1d;
+  border: 1px solid #ddb0a5;
+  box-shadow: 0 8px 18px rgba(139, 45, 29, 0.12);
 }
 
 .delete-button:hover:not(:disabled) {
-  background: #ffcccc;
-  border-color: #ff8080;
+  background: #f2d6cc;
+  border-color: #c98778;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.2);
+  box-shadow: 0 12px 24px rgba(139, 45, 29, 0.16);
 }
 
 .delete-button:disabled {
@@ -210,6 +219,7 @@
 .form-group textarea::placeholder {
   color: var(--ts-text);
   font-style: italic;
+  opacity: 0.9;
 }
 
 /* Select styling */
@@ -231,6 +241,14 @@
 
   .create-event-container h2 {
     font-size: 1.8rem;
+  }
+
+  .event-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group--full {
+    grid-column: auto;
   }
 
   .form-actions {
@@ -257,7 +275,7 @@
 input.error,
 textarea.error,
 select.error {
-  border-color: #dc2626 !important;
-  border-width: 2px;
+  border-color: #b82105 !important;
+  box-shadow: 0 0 0 3px rgba(184, 33, 5, 0.12);
 }
 
