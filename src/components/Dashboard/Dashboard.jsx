@@ -1,41 +1,98 @@
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { convertToUserTimezone, getEventEnd } from "../../utils/TimeZoneUtils";
+import { Search, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import EventCard from "../Events/EventCard/EventCard";
-
 import LoadingComponent from "../Loading/LoadingComponent";
 import eventService from "../Services/EventService";
+
+// Swiper imports
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { A11y, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import "./Dashboard.css";
 
 function Dashboard() {
   const [allEvents, setAllEvents] = useState([]);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("upcoming"); // "upcoming" | "past"
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("UPCOMING"); // "upcoming" | "past"
 
-   // Pagination state
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  // Pagination state
+  const [pageSize] = useState(3); // fixed page size, no need to change
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
+  const [searchInput, setSearchInput] = useState(""); // raw input (instant)
+  const [searchQuery, setSearchQuery] = useState(""); // debounced (triggers fetch)
 
+  const isFetchingRef = useRef(false);
+  const currentPageRef = useRef(0);
+  const debounceTimer = useRef(null);
+
+  const isInitialMount = useRef(true);
+
+  // Initial load
   useEffect(() => {
-    fetchEvents();
-  }, [currentPage, pageSize]); // Refetch when page or size changes
+    fetchEvents(0, activeTab, searchQuery);
+  }, []);
 
-  const fetchEvents = async () => {
+  // Tab / search reset
+  useEffect(() => {
+    currentPageRef.current = 0;
+    setAllEvents([]);
+    fetchEvents(0, activeTab, searchQuery);
+  }, [activeTab, searchQuery]);
+
+  // ── Debounce: commit searchQuery 500ms after user stops typing ──
+  useEffect(() => {
+    setIsSearching(true);
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 800);
+    return () => clearTimeout(debounceTimer.current);
+  }, [searchInput]);
+
+  const fetchEvents = async (page, type = "UPCOMING", query = "") => {
     try {
-      setIsLoading(true);
+      // Only set global loading for the first page
+      if (page === 0) setIsLoading(true);
       setError(null);
 
-      const response = await eventService.getAllEvents(currentPage, pageSize);
+      const response = await eventService.getAllEvents(
+        page,
+        pageSize,
+        type,
+        query,
+      );
 
       if (response.success && response.events) {
-        setAllEvents(response.events);
+        setAllEvents((prevEvents) => {
+          // If it's page 0 (initial load/tab switch), replace the list
+          if (page === 0) return response.events;
+
+          // Otherwise, append new events to the old ones
+          const combined = [...prevEvents, ...response.events];
+
+          // Optional: Deduplicate by eventId just in case the API sends duplicates
+          return Array.from(
+            new Map(combined.map((e) => [e.eventId, e])).values(),
+          );
+        });
         setTotalPages(response.totalPages || 0);
         setTotalElements(response.totalElements || 0);
+
+        console.log(allEvents);
+
+        currentPageRef.current = page;
+      } else if (response.events && response.events.length === 0) {
+        // Treat as empty, not an error
+        setAllEvents([]);
+        setTotalPages(0);
+        setTotalElements(0);
       } else {
         setError(response.message || "No events found");
       }
@@ -44,57 +101,15 @@ function Dashboard() {
       setError("Failed to load events. Please try again later.");
     } finally {
       setIsLoading(false);
+      setIsSearching(false);
     }
   };
 
-  const now = new Date();
-
-  // 🔍 Search filter
-  const matchesSearch = (event) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      event.title.toLowerCase().includes(q) ||
-      event.shortDescription.toLowerCase().includes(q) ||
-      (event.tags && event.tags.toLowerCase().includes(q))
-    );
-  };
-
-  const filteredEvents = allEvents
-    .filter((event) => {
-      const eventStart = convertToUserTimezone(event.eventDateTime);
-      const eventEnd = getEventEnd(event);
-
-      if (!eventEnd) return true; // edge case
-
-      return activeTab === "upcoming"
-        ? eventEnd >= now // still upcoming if end time is in future
-        : eventEnd < now; // past only if end time is in past
-    })
-    .filter(matchesSearch)
-    .sort((a, b) => {
-      const dateA = convertToUserTimezone(a.eventDateTime);
-      const dateB = convertToUserTimezone(b.eventDateTime);
-      return activeTab === "upcoming"
-        ? dateA - dateB // soonest first
-        : dateB - dateA; // recent past first
-    });
-  // Pagination handlers
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+  // Called by Swiper when user reaches the last slide
+  const handleReachEnd = () => {
+    if (currentPageRef.current + 1 < totalPages) {
+      fetchEvents(currentPageRef.current + 1, activeTab, searchQuery); // append next page
     }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(0); // Reset to first page when changing page size
   };
 
   // LOADING UI
@@ -106,13 +121,21 @@ function Dashboard() {
     );
   }
 
+  const handleClear = () => {
+    setSearchInput("");
+    setSearchQuery("");
+  };
+
   // ERROR UI
   if (error) {
     return (
       <div className="dashboard-container">
         <div className="error-state">
           <p className="error-message">⚠️ {error}</p>
-          <button onClick={fetchEvents} className="retry-button">
+          <button
+            onClick={fetchEvents(currentPageRef.current, activeTab)}
+            className="retry-button"
+          >
             Try Again
           </button>
         </div>
@@ -123,8 +146,8 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>{activeTab === "upcoming" ? "Upcoming Events" : "Past Events"}</h2>
-        <p className="event-count">{filteredEvents.length} event(s)</p>
+        <h2>{activeTab === "UPCOMING" ? "Upcoming Events" : "Past Events"}</h2>
+        <p className="event-count">{totalElements} event(s)</p>
       </div>
 
       {/* 🔍 Search + Toggle */}
@@ -138,41 +161,47 @@ function Dashboard() {
       >
         {/* Search Bar */}
         <div className="dashboard-search-wrapper">
-          <Search
-            size={20}
-            style={{
-              position: "absolute",
-              left: "16px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: "#999",
-            }}
-          />
+          {/* Leading icon: spinner while searching, magnifier otherwise */}
+          {isSearching ? (
+            <div className="search-spinner" />
+          ) : (
+            <Search size={20} className="search-icon" />
+          )}
 
           <input
             type="text"
             placeholder="Search events, keywords, topics..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="dashboard-search-input"
           />
+          {/* Clear button — only shown when there's text */}
+          {searchInput && (
+            <button
+              onClick={handleClear}
+              className="search-clear-btn"
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         {/* Toggle */}
         <div className="dashboard-toggle-container">
           <button
-            onClick={() => setActiveTab("upcoming")}
+            onClick={() => setActiveTab("UPCOMING")}
             className={`dashboard-toggle-btn ${
-              activeTab === "upcoming" ? "active" : ""
+              activeTab === "UPCOMING" ? "active" : ""
             }`}
           >
             Upcoming
           </button>
 
           <button
-            onClick={() => setActiveTab("past")}
+            onClick={() => setActiveTab("PAST")}
             className={`dashboard-toggle-btn ${
-              activeTab === "past" ? "active" : ""
+              activeTab === "PAST" ? "active" : ""
             }`}
           >
             Past
@@ -181,78 +210,40 @@ function Dashboard() {
       </div>
 
       {/* Events Grid */}
-      {filteredEvents.length === 0 ? (
+      {allEvents.length === 0 ? (
         <div className="empty-filtered-state">
           <p className="empty-message">
-            {activeTab === "past"
+            {activeTab === "PAST"
               ? "📭 No past events to show"
               : "🎉 No upcoming events at the moment"}
           </p>
         </div>
       ) : (
         <>
-          <div className="events-grid">
-            {filteredEvents.map((event) => (
-              <EventCard key={event.eventId} event={event} />
+          <Swiper
+            modules={[Navigation, Pagination, A11y]}
+            spaceBetween={20}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            observer={true}
+            observeParents={true}
+            breakpoints={{
+              640: { slidesPerView: 1 },
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            onReachEnd={handleReachEnd} // fetch next page when last slide is reached
+            className="events-swiper"
+          >
+            {allEvents.map((event) => (
+              <SwiperSlide key={event.eventId}>
+                <EventCard event={event} />
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
 
-          {/* Pagination Controls */}
-          <div className="pagination-container">
-            <div className="pagination-info">
-              <span>
-                Page {currentPage + 1} of {totalPages}
-              </span>
-              <div className="page-size-selector">
-                <label htmlFor="pageSize">Items per page:</label>
-                <select
-                  id="pageSize"
-                  value={pageSize}
-                  onChange={handlePageSizeChange}
-                  className="page-size-select"
-                >
-                  <option value="6">6</option>
-                  <option value="12">12</option>
-                  <option value="18">18</option>
-                 
-                </select>
-              </div>
-            </div>
-
-            <div className="pagination-controls">
-              <button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 0}
-                className="pagination-button"
-              >
-                <ChevronLeft size={20} />
-                Previous
-              </button>
-              
-              <div className="page-numbers">
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentPage(index)}
-                    className={`page-number ${
-                      currentPage === index ? "active" : ""
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages - 1}
-                className="pagination-button"
-              >
-                Next
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
+          {/* Server-side pagination */}
         </>
       )}
     </div>

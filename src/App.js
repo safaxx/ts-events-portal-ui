@@ -1,12 +1,14 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Account/Login/Login.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import AddEventForm from "./components/Events/AddEvent/AddEventForm.jsx";
-import ProtectedRoute from "./components/Services/ProtectedRoute.js";
-import NavBar from "./components/NavBar/NavBar.jsx";
-import MyEventsPage from "./components/Events/MyEventsPage.jsx";
 import EventDetailsPage from "./components/Events/EventDetailsPage.jsx";
+import MyEventsPage from "./components/Events/MyEventsPage.jsx";
+import NavBar from "./components/NavBar/NavBar.jsx";
+import ProtectedRoute from "./components/Services/ProtectedRoute.js";
+
+
 
 function App() {
   return (

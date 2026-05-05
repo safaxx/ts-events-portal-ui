@@ -12,9 +12,7 @@ function NavBar() {
   const userName = localStorage.getItem("name");
   const userEmail = localStorage.getItem("email");
 
-  const userRoles =localStorage.getItem("roles") || "";
-
-  // Check if user has admin role
+  const userRoles = localStorage.getItem("roles") || "";
   const isAdmin = userRoles.includes("ROLE_ADMIN");
 
   const handleLogout = () => {
@@ -23,37 +21,62 @@ function NavBar() {
   };
 
   return (
-    <header className="topbar">
-      <div className="topbar__brand" onClick={() => nav("/dashboard")}>
-        <img
-          src="/logo-ts.svg"
-          alt="Tech Sisters logo"
-          className="topbar__logo"
-        />
+    <aside className="sidebar">
+      {/* Logo / Brand — always visible */}
+      <div className="sidebar__brand" onClick={() => nav("/dashboard")}>
+        <img src="/logo-ts.svg" alt="Tech Sisters logo" className="sidebar__logo" />
       </div>
 
-      <nav className="topbar__nav">
+      {/* Expandable label shown beside logo when hovered */}
+      <span className="sidebar__brand-label">Tech Sisters</span>
 
+      <nav className="sidebar__nav">
         {isAdmin && (
-          <button className="topbar__link" onClick={() => nav("/create-event")}>
-            Create Event
+          <button
+            className="sidebar__item"
+            onClick={() => nav("/create-event")}
+          >
+            {/* Icon */}
+            <svg className="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <line x1="12" y1="14" x2="12" y2="18" />
+              <line x1="10" y1="16" x2="14" y2="16" />
+            </svg>
+            <span className="sidebar__label">Create Event</span>
           </button>
         )}
 
         {isAuthed && (
-          <button className="topbar__link" onClick={() => nav("/my-events")}>
-            My Events
+          <button
+            className="sidebar__item"
+            onClick={() => nav("/my-events")}
+          >
+            <svg className="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+            </svg>
+            <span className="sidebar__label">My Events</span>
           </button>
         )}
+      </nav>
 
-        {/* USER AVATAR DROPDOWN */}
+      {/* Bottom: avatar or login */}
+      <div className="sidebar__footer">
         {isAuthed ? (
           <div className="user-menu-wrapper">
             <div
               className="user-avatar"
               onClick={() => setMenuOpen(!menuOpen)}
+              title={userName || "User"}
             >
               {userName?.charAt(0).toUpperCase() || "U"}
+            </div>
+
+            <div className="sidebar__user-info">
+              <span className="sidebar__username">{userName}</span>
+              <span className="sidebar__email">{userEmail}</span>
             </div>
 
             {menuOpen && (
@@ -67,12 +90,17 @@ function NavBar() {
             )}
           </div>
         ) : (
-          <button className="topbar__link" onClick={() => nav("/login")}>
-            Log in
+          <button className="sidebar__item" onClick={() => nav("/login")}>
+            <svg className="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+            <span className="sidebar__label">Log in</span>
           </button>
         )}
-      </nav>
-    </header>
+      </div>
+    </aside>
   );
 }
 

@@ -44,6 +44,56 @@
   font-family: "Poppins", sans-serif;
 }
 
+/* Spinner inside search bar */
+.search-spinner {
+  position: absolute;
+  left: 16px;
+  top: 35%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-top-color: #666;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Static search icon */
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+/* Clear (×) button */
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 50%;
+  transition: color 0.2s, background 0.2s;
+}
+
+.search-clear-btn:hover {
+  color: #333;
+  background: #f0f0f0;
+}
+
 /* Filter Controls */
 .filter-controls {
   display: flex;
@@ -87,6 +137,47 @@
 
 .filter-icon {
   font-size: 20px;
+}
+
+/* Swiper container — add bottom space for the dots */
+.events-swiper {
+  width: 100%;
+  padding-bottom: 48px !important;
+}
+
+/* Pagination dots */
+.events-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #ccc;
+  opacity: 1;
+}
+
+.events-swiper .swiper-pagination-bullet-active {
+  background: #222;
+}
+
+/* Navigation arrows */
+.events-swiper .swiper-button-prev,
+.events-swiper .swiper-button-next {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: none;
+  top: 40%;
+}
+
+.events-swiper .swiper-button-prev::after,
+.events-swiper .swiper-button-next::after {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.events-swiper .swiper-button-disabled {
+  opacity: 0.3;
 }
 
 /* Events Grid */
