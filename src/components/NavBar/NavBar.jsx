@@ -27,9 +27,6 @@ function NavBar() {
         <img src="/logo-ts.svg" alt="Tech Sisters logo" className="sidebar__logo" />
       </div>
 
-      {/* Expandable label shown beside logo when hovered */}
-      <span className="sidebar__brand-label">Tech Sisters</span>
-
       <nav className="sidebar__nav">
         {isAdmin && (
           <button

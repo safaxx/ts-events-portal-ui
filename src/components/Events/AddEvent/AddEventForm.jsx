@@ -235,7 +235,7 @@ function AddEventForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="event-form">
         {/* Event Title */}
-        <div className="form-group">
+        <div className="form-group form-group--full">
           <label htmlFor="title">Event Title</label>
           <input
             type="text"
@@ -260,7 +260,7 @@ function AddEventForm() {
         </div>
 
         {/* Description */}
-        <div className="form-group">
+        <div className="form-group form-group--full">
           <label htmlFor="short_description">Description</label>
           <textarea
             id="short_description"
@@ -283,7 +283,7 @@ function AddEventForm() {
         </div>
 
         {isEditMode && (
-          <div className="form-group">
+          <div className="form-group form-group--full">
             <label htmlFor="long_description">Additional Event Details</label>
             <textarea
               id="long_description"
@@ -452,7 +452,7 @@ function AddEventForm() {
           )}
         </div>
 
-        <div className="form-actions">
+        <div className="form-actions form-group--full">
           {isEditMode && (
             <button
               type="button"

@@ -1,11 +1,15 @@
 /* Tech Sisters Global Color Palette */
 :root {
-  --ts-primary: #0F3363;      /* Dark blue - primary */
-  --ts-secondary: #4970A5;    /* Medium blue - secondary */
-  --ts-text: #747474;         /* Gray - text */
-  --ts-accent: #FBF1E8;       /* Beige - accent */
-  --ts-light-blue: #C2D7ED;   /* Light blue */
-  --ts-pink: #FDD9D9;         /* Light pink */
+  --ts-primary: #112250;      /* Deep navy */
+  --ts-secondary: #3c507d;    /* Slate blue */
+  --ts-text: #4f5d75;         /* Muted text */
+  --ts-accent: #e0c58f;       /* Warm gold */
+  --ts-surface: #d9cbc2;      /* Dusty beige */
+  --ts-bg-soft: #f5f0e9;      /* Soft cream */
+  --ts-light-blue: #f7fafc;   /* Very light neutral */
+  --ts-pink: #f6e3dc;         /* Soft blush */
+  --sidebar-width-collapsed: 64px;
+  --sidebar-width-expanded: 220px;
 }
 
 /* Global Resets */
@@ -32,9 +36,18 @@ body {
 
 /* Main Content Area */
 .main-content {
+  margin-left: var(--sidebar-width-collapsed);
+  width: calc(100% - var(--sidebar-width-collapsed));
   padding-top: 1rem;
   min-height: calc(100vh - 80px);
   background: #fff !important;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar:hover + .main-content {
+  margin-left: var(--sidebar-width-expanded);
+  width: calc(100% - var(--sidebar-width-expanded));
 }
 
 /* Typography */
@@ -231,6 +244,7 @@ button {
   }
 
   .main-content {
+    width: calc(100% - var(--sidebar-width-collapsed));
     padding-top: 0.5rem;
   }
 }

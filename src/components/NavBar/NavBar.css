@@ -44,19 +44,24 @@
 .sidebar__brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 64px;           /* always matches collapsed width */
-  min-width: 64px;
-  height: 52px;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 0 16px;
   cursor: pointer;
   flex-shrink: 0;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
 }
 
 .sidebar__logo {
-  width: 36px;
-  height: 36px;
+  width: 152px;
+  height: auto;
+  max-height: 46px;
   object-fit: contain;
+  object-position: left center;
+  flex-shrink: 0;
+  margin-left: 18px;
   transition: transform 0.2s ease;
 }
 
@@ -73,6 +78,7 @@
   transform: translateX(-8px);
   transition: opacity 0.2s ease 0.05s, transform 0.2s ease 0.05s;
   pointer-events: none;
+  display: none;
 }
 
 .sidebar:hover .sidebar__brand-label {
@@ -123,14 +129,14 @@
   transform: translateY(-50%) scaleY(0);
   width: 3px;
   height: 60%;
-  background: #6c63ff;
+  background: #e0c58f;
   border-radius: 0 3px 3px 0;
   transition: transform 0.15s ease;
 }
 
 .sidebar__item:hover {
-  background: #f5f4ff;
-  color: #6c63ff;
+  background: #f5f0e9;
+  color: #112250;
 }
 
 .sidebar__item:hover::before {
@@ -182,7 +188,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #6c63ff;
+  background: #112250;
   color: #fff;
   font-size: 15px;
   font-weight: 700;
@@ -197,7 +203,7 @@
 
 .user-avatar:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(224, 197, 143, 0.35);
 }
 
 .sidebar__user-info {
