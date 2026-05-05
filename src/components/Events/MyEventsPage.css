@@ -42,6 +42,11 @@
   border: 1px solid #99e0a3;
   font-size: 0.95rem;
 }
-.my-events-page{
-    padding: 20px;
+
+.my-events-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+
+  min-height: 100vh;
 }

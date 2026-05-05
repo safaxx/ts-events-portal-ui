@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-import authService from "../../Services/AuthService";
 import { useNavigate } from "react-router-dom";
-import "./EventCard.css";
 import {
   formatEventDateTime,
   getRelativeDate,
@@ -9,7 +6,7 @@ import {
   getTimezoneAbbreviation,
   getUserTimezone,
 } from "../../../utils/TimeZoneUtils";
-import eventService from "../../Services/EventService";
+import "./EventCard.css";
 
 function EventCard({ event }) {
   // Format the date and time in user's timezone
@@ -18,13 +15,16 @@ function EventCard({ event }) {
   const timeUntil = getTimeUntilEvent(event.eventDateTime);
   const userTimezone = getTimezoneAbbreviation(getUserTimezone());
   const tags = event.tags ? event.tags.split(",").map((tag) => tag.trim()) : [];
-  // Event is past only if NOW is after (start + duration)
- const checkPastEvent = () => {
-  if (!dateObject || !event.duration) return false;
 
-  const eventEnd = new Date(dateObject.getTime() + event.duration * 60000); 
-  return new Date() > eventEnd;
-};
+  const CHARACTER_LIMIT = 100; // Adjust based on your design
+
+  // Event is past only if NOW is after (start + duration)
+  const checkPastEvent = () => {
+    if (!dateObject || !event.duration) return false;
+
+    const eventEnd = new Date(dateObject.getTime() + event.duration * 60000);
+    return new Date() > eventEnd;
+  };
   const navigate = useNavigate();
 
   const handleViewDetails = (e) => {
@@ -93,7 +93,26 @@ function EventCard({ event }) {
       </div>
 
       {/* Event Description */}
-      <p className="event-description">{event.shortDescription}</p>
+
+      {/* Event Description */}
+      <p className="event-description">
+        {event.shortDescription.length > 40 ? (
+          <>
+            {event.shortDescription.slice(0, 40)}...{" "}
+            <span
+              className="see-more-link"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewDetails(e);
+              }}
+            >
+              See more
+            </span>
+          </>
+        ) : (
+          event.shortDescription
+        )}
+      </p>
 
       {/* Event Details */}
       <div className="event-details">

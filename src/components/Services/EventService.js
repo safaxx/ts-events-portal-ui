@@ -30,9 +30,10 @@ const eventService = {
    * Fetches all events(PUBLIC - but sends auth token if available).
    * @returns {Promise<object>} The data from the API response.
    */
-  getAllEvents: async (page=0, size=6) => {
+  getAllEvents: async (page=0, size=6, type="UPCOMING",query) => {
     try {
-      const response = await api.get(`/public/events/all?page=${page}&size=${size}`);
+      console.log(type,page,size);
+      const response = await api.get(`/public/events/all?page=${page}&size=${size}&listType=${type}&searchQuery=${query}`);
       return response.data;
     } catch (error) {
       const message =
@@ -101,9 +102,9 @@ const eventService = {
     }
   },
 
-  getMyCreatedEvents: async () => {
+  getMyCreatedEvents: async (page=0, size=6) => {
     try {
-      const response = await api.get("/events/my-created");
+      const response = await api.get(`/events/my-created?page=${page}&size=${size}`);
       return response.data;
     } catch (error) {
       const message =
