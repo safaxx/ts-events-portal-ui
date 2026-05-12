@@ -233,9 +233,12 @@ function AddEventForm() {
         <div className={`message ${message.type}`}>{message.text}</div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="event-form">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`event-form ${!isEditMode ? "event-form--create" : ""}`}
+      >
         {/* Event Title */}
-        <div className="form-group form-group--full">
+        <div className="form-group form-group--full form-group--title">
           <label htmlFor="title">Event Title</label>
           <input
             type="text"
@@ -259,35 +262,14 @@ function AddEventForm() {
           )}
         </div>
 
-        {/* Description */}
-        <div className="form-group form-group--full">
-          <label htmlFor="short_description">Description</label>
-          <textarea
-            id="short_description"
-            rows="4"
-            placeholder="Share a short intro about your event (you can add more details after creating it)."
-            className={errors.short_description ? "error" : ""}
-            {...register("short_description", {
-              required: "Short description is required",
-              maxLength: {
-                value: 200,
-                message: "Short description must not exceed 200 characters",
-              },
-            })}
-          />
-          {errors.short_description && (
-            <span className="error-message">
-              {errors.short_description.message}
-            </span>
-          )}
-        </div>
+       
 
         {isEditMode && (
           <div className="form-group form-group--full">
             <label htmlFor="long_description">Additional Event Details</label>
             <textarea
               id="long_description"
-              rows="6"
+              rows="5"
               placeholder="Add more details about your event..."
               {...register("long_description")}
             />
@@ -336,7 +318,7 @@ function AddEventForm() {
             <input
               type="url"
               id="event_link"
-              placeholder="https://zoom.com/meeting (you can add this later also)"
+              placeholder="https://zoom.com/meeting (you can add this later)"
               {...register("event_link", {
                 validate: {
                   startsWithHttp: (value) => {
@@ -376,6 +358,29 @@ function AddEventForm() {
           </div>
         )}
 
+        {/* Description */}
+        <div className="form-group form-group--full form-group--description">
+          <label htmlFor="short_description">Description</label>
+          <textarea
+            id="short_description"
+            rows={isEditMode ? 4 : 3}
+            placeholder="Share a short intro about your event (you can add more details after creating it)."
+            className={errors.short_description ? "error" : ""}
+            {...register("short_description", {
+              required: "Short description is required",
+              maxLength: {
+                value: 200,
+                message: "Short description must not exceed 200 characters",
+              },
+            })}
+          />
+          {errors.short_description && (
+            <span className="error-message">
+              {errors.short_description.message}
+            </span>
+          )}
+        </div>
+
         {/* Host Email */}
         <div className="form-group">
           <label htmlFor="event_host_email">Host Email</label>
@@ -402,7 +407,7 @@ function AddEventForm() {
           <input
             type="text"
             id="event_host_name"
-            placeholder="Rayhana Rahman"
+            placeholder="Grace W"
             {...register("event_host_name", {
               required: "Host name is required",
             })}
@@ -442,7 +447,14 @@ function AddEventForm() {
             id="tags"
             placeholder="e.g., AI, Tech, Community"
             {...register("tags", {
-              pattern: { value: /^[\w-]+(?:,\s*[\w-]+)*$/, message: "Tags cannot have trailing commas" },
+              validate: (value) => {
+                if (!value?.trim()) return true;
+
+                const tags = value.split(",").map((tag) => tag.trim());
+                const hasEmptyTag = tags.some((tag) => !tag);
+
+                return !hasEmptyTag || "Enter tags separated by commas without leaving any empty tags";
+              },
             })}
           />
           <small className="helper-text">Separate tags with commas</small>
@@ -451,6 +463,7 @@ function AddEventForm() {
             <span className="error-message">{errors.tags.message}</span>
           )}
         </div>
+        
 
         <div className="form-actions form-group--full">
           {isEditMode && (
