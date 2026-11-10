@@ -1,9 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import api from './ApiRequestInterceptor';
 
-// Set up your base API URL. 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
 /**
  * Sends a POST request to the /send-otp endpoint.
  * @param {string} email - The user's email address.

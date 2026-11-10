@@ -26,6 +26,20 @@ across time zones and busy schedules — without the usual confusion of event pl
 - **Deployment** – Render
 ---
 
+## Frontend development
+
+The React frontend uses Vite.
+
+- `npm start` starts the development server.
+- `npm run build` creates the production build in `dist/`.
+- `npm run preview` serves the production build locally.
+- `npm test` runs the test suite once; `npm run test:watch` runs it in watch mode.
+
+Set the frontend API URL with `VITE_API_BASE_URL` in `.env`. Vite only exposes
+environment variables prefixed with `VITE_` to browser code.
+
+---
+
 ## 👩‍💻 The Team
 
 Built with 💕 by **Tech Sisters**
