@@ -12,13 +12,6 @@
   --sidebar-width-expanded: 220px;
 }
 
-/* Global Resets */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 /* Body Styling - Tech Sisters Theme */
 body {
   background: #fff;

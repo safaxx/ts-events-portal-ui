@@ -7,6 +7,7 @@ import EventDetailsPage from "./components/Events/EventDetailsPage.jsx";
 import MyEventsPage from "./components/Events/MyEventsPage.jsx";
 import NavBar from "./components/NavBar/NavBar.jsx";
 import ProtectedRoute from "./components/Services/ProtectedRoute.jsx";
+import { Toaster } from "./components/ui/sonner.jsx";
 
 
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar />
+      <Toaster position="top-right" />
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

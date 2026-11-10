@@ -1,29 +1,25 @@
-import { Search, X } from "lucide-react";
+import { ArrowDown, CalendarDays, History, Loader2, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventCard from "../Events/EventCard/EventCard";
-import LoadingComponent from "../Loading/LoadingComponent";
 import eventService from "../Services/EventService";
-
-// Swiper imports
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { A11y, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "./Dashboard.css";
 
 function Dashboard() {
   const [allEvents, setAllEvents] = useState([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSearching, setIsSearching] = useState(false);
-  const [error, setError] = useState(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [activeTab, setActiveTab] = useState("UPCOMING"); // "upcoming" | "past"
 
   // Pagination state
   const [pageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
 
   const [searchInput, setSearchInput] = useState(""); // raw input (instant)
   const [searchQuery, setSearchQuery] = useState(""); // debounced (triggers fetch)
@@ -31,8 +27,6 @@ function Dashboard() {
   const isFetchingRef = useRef(false);
   const currentPageRef = useRef(0);
   const debounceTimer = useRef(null);
-
-  const isInitialMount = useRef(true);
 
   // Initial load
   useEffect(() => {
@@ -48,7 +42,6 @@ function Dashboard() {
 
   // ── Debounce: commit searchQuery 500ms after user stops typing ──
   useEffect(() => {
-    setIsSearching(true);
     clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => {
       setSearchQuery(searchInput);
@@ -57,10 +50,19 @@ function Dashboard() {
   }, [searchInput]);
 
   const fetchEvents = async (page, type = "UPCOMING", query = "") => {
+    if (page > 0 && isFetchingRef.current) return;
+
+    if (page > 0) {
+      isFetchingRef.current = true;
+      setIsFetchingMore(true);
+    }
+
     try {
       // Only set global loading for the first page
-      if (page === 0) setIsLoading(true);
-      setError(null);
+      if (page === 0) {
+        setIsLoading(true);
+        setLoadFailed(false);
+      }
 
       const response = await eventService.getAllEvents(
         page,
@@ -83,40 +85,80 @@ function Dashboard() {
           );
         });
         setTotalPages(response.totalPages || 0);
-        setTotalElements(response.totalElements || 0);
 
         console.log(allEvents);
 
         currentPageRef.current = page;
       } else if (response.events && response.events.length === 0) {
-        // Treat as empty, not an error
-        setAllEvents([]);
-        setTotalPages(0);
-        setTotalElements(0);
+        if (page === 0) {
+          setAllEvents([]);
+          setTotalPages(0);
+          currentPageRef.current = 0;
+        } else {
+          setTotalPages(page);
+        }
       } else {
-        setError(response.message || "No events found");
+        if (page === 0) setLoadFailed(true);
+        const message = response.message || "Failed to load events.";
+        toast.error(message, {
+          action: {
+            label: "Retry",
+            onClick: () => fetchEvents(page, type, query),
+          },
+        });
       }
     } catch (err) {
       console.error("Error fetching events:", err);
-      setError("Failed to load events. Please try again later.");
+      if (page === 0) setLoadFailed(true);
+      toast.error("Failed to load events. Please try again.", {
+        action: {
+          label: "Retry",
+          onClick: () => fetchEvents(page, type, query),
+        },
+      });
     } finally {
-      setIsLoading(false);
-      setIsSearching(false);
+      if (page === 0) {
+        setIsLoading(false);
+      } else {
+        isFetchingRef.current = false;
+        setIsFetchingMore(false);
+      }
     }
   };
 
-  // Called by Swiper when user reaches the last slide
-  const handleReachEnd = () => {
+  const handleLoadMore = () => {
     if (currentPageRef.current + 1 < totalPages) {
-      fetchEvents(currentPageRef.current + 1, activeTab, searchQuery); // append next page
+      fetchEvents(currentPageRef.current + 1, activeTab, searchQuery);
     }
   };
 
   // LOADING UI
   if (isLoading) {
     return (
-      <div className="dashboard-container">
-        <LoadingComponent />
+      <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
+        <div className="mb-12 flex justify-center">
+          <Skeleton className="h-10 w-40" />
+        </div>
+        <div className="mb-5 flex flex-col gap-3 md:flex-row md:gap-4">
+          <Skeleton className="h-[50px] flex-1" />
+          <Skeleton className="h-[50px] w-full md:w-[248px]" />
+        </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-xl border border-[#C2D7ED] bg-white"
+            >
+              <Skeleton className="h-48 w-full rounded-none" />
+              <div className="space-y-4 p-5">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -126,118 +168,148 @@ function Dashboard() {
     setSearchQuery("");
   };
 
-  // ERROR UI
-  if (error) {
-    return (
-      <div className="dashboard-container">
-        <div className="error-state">
-          <p className="error-message">⚠️ {error}</p>
-          <button
-            onClick={fetchEvents(currentPageRef.current, activeTab)}
-            className="retry-button"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    clearTimeout(debounceTimer.current);
+    setSearchQuery(searchInput);
+  };
 
   return (
-    <div className="dashboard-container">
-      {/* <div className="dashboard-header">
-        <h2>{activeTab === "UPCOMING" ? "Upcoming Events" : "Past Events"}</h2>
-        <p className="event-count">{totalElements} event(s)</p>
-      </div> */}
+    <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
+      <div className="mb-12 text-center">
+        <h1 className="!mb-0 !text-[2.5rem] !font-bold !text-[#0F3363] max-md:!text-[2rem]">
+          Events
+        </h1>
+      </div>
 
       {/* 🔍 Search + Toggle */}
-      <div className="dashboard-search-toggle">
+      <div className="mb-5 flex flex-col items-stretch gap-3 md:flex-row md:gap-4">
         {/* Search Bar */}
-        <div className="dashboard-search-wrapper">
-          {/* Leading icon: spinner while searching, magnifier otherwise */}
-          {isSearching ? (
-            <div className="search-spinner" />
-          ) : (
-            <Search size={20} className="search-icon" />
-          )}
+        <form className="min-w-0 flex-1" onSubmit={handleSearchSubmit}>
+          <Field orientation="horizontal" className="items-center">
+            <FieldLabel htmlFor="event-search" className="sr-only">
+              Search events
+            </FieldLabel>
+            <ButtonGroup className="min-w-0 flex-1">
+              <Input
+                id="event-search"
+                type="search"
+                placeholder="Search events, keywords, topics..."
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                className="h-[50px]"
+              />
+              <Button type="submit" variant="outline" className="h-[50px]">
+                <Search aria-hidden="true" />
+                <span>Search</span>
+              </Button>
+            </ButtonGroup>
+            {searchInput && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleClear}
+                aria-label="Clear search"
+                className="h-[50px] w-[50px]"
+              >
+                <X aria-hidden="true" />
+              </Button>
+            )}
+          </Field>
+        </form>
 
-          <input
-            type="text"
-            placeholder="Search events, keywords, topics..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="dashboard-search-input"
-          />
-          {/* Clear button — only shown when there's text */}
-          {searchInput && (
-            <button
-              onClick={handleClear}
-              className="search-clear-btn"
-              aria-label="Clear search"
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full md:w-auto"
+        >
+          <TabsList className="h-[50px] w-full justify-stretch rounded-[15px] bg-gray-200 p-1 md:w-auto">
+            <TabsTrigger
+              value="UPCOMING"
+              className="h-12 min-w-[120px] flex-1 rounded-[12px] px-6 text-base font-medium text-gray-500 transition-colors hover:text-black data-active:bg-[#0F3363] data-active:text-white md:flex-initial"
             >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-
-        {/* Toggle */}
-        <div className="dashboard-toggle-container">
-          <button
-            onClick={() => setActiveTab("UPCOMING")}
-            className={`dashboard-toggle-btn ${
-              activeTab === "UPCOMING" ? "active" : ""
-            }`}
-          >
-            Upcoming
-          </button>
-
-          <button
-            onClick={() => setActiveTab("PAST")}
-            className={`dashboard-toggle-btn ${
-              activeTab === "PAST" ? "active" : ""
-            }`}
-          >
-            Past
-          </button>
-        </div>
+              <CalendarDays aria-hidden="true" />
+              Upcoming
+            </TabsTrigger>
+            <TabsTrigger
+              value="PAST"
+              className="h-12 min-w-[120px] flex-1 rounded-[12px] px-6 text-base font-medium text-gray-500 transition-colors hover:text-black data-active:bg-[#0F3363] data-active:text-white md:flex-initial"
+            >
+              <History aria-hidden="true" />
+              Past
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Events Grid */}
-      {allEvents.length === 0 ? (
-        <div className="empty-filtered-state">
-          <p className="empty-message">
-            {activeTab === "PAST"
-              ? "📭 No past events to show"
-              : "🎉 No upcoming events at the moment"}
+      {loadFailed ? null : allEvents.length === 0 ? (
+        <div className="flex min-h-[320px] flex-col items-center justify-center px-6 py-12 text-center">
+          <div className="mb-5 flex size-14 items-center justify-center rounded-full bg-[#FBF1E8] text-[#0F3363]">
+            {activeTab === "PAST" ? (
+              <History aria-hidden="true" className="size-6" />
+            ) : (
+              <CalendarDays aria-hidden="true" className="size-6" />
+            )}
+          </div>
+          <h2 className="!mb-2 !text-xl !font-semibold !text-[#0F3363]">
+            {searchQuery
+              ? "No events match your search"
+              : activeTab === "PAST"
+                ? "No past events yet"
+                : "No upcoming events right now"}
+          </h2>
+          <p className="!mb-0 max-w-md !text-sm !text-[#747474]">
+            {searchQuery
+              ? "Try a different search term or clear your search."
+              : activeTab === "PAST"
+                ? "Past events will appear here after they’ve taken place."
+                : "Check back soon for upcoming Tech Sisters events."}
           </p>
+          {searchQuery && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClear}
+              className="mt-5 border-[#C2D7ED] text-[#0F3363]"
+            >
+              Clear search
+            </Button>
+          )}
         </div>
       ) : (
-        <>
-          <Swiper
-            modules={[Navigation, Pagination, A11y]}
-            spaceBetween={20}
-            slidesPerView={1}
-            navigation
-            pagination={{ clickable: true }}
-            observer={true}
-            observeParents={true}
-            breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            onReachEnd={handleReachEnd} // fetch next page when last slide is reached
-            className="events-swiper"
-          >
-            {allEvents.map((event) => (
-              <SwiperSlide key={event.eventId}>
-                <EventCard event={event} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {allEvents.map((event) => (
+            <div key={event.eventId} className="h-full [&_.event-card]:!max-w-none">
+              <EventCard event={event} />
+            </div>
+          ))}
+        </div>
+      )}
 
-          {/* Server-side pagination */}
-        </>
+      {!loadFailed && allEvents.length > 0 && currentPageRef.current + 1 < totalPages && (
+        <div className="mt-8 flex justify-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleLoadMore}
+            disabled={isFetchingMore}
+            className="h-10 min-w-36 gap-2 border-[#C2D7ED] px-5 text-[#0F3363] hover:bg-[#FBF1E8] disabled:opacity-60"
+          >
+            {isFetchingMore ? (
+              <>
+                <Loader2 aria-hidden="true" className="animate-spin" />
+                Loading more
+              </>
+            ) : (
+              <>
+                <ArrowDown aria-hidden="true" />
+                Load more
+              </>
+            )}
+          </Button>
+        </div>
       )}
     </div>
   );

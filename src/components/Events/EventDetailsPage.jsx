@@ -74,7 +74,7 @@ export default function EventDetailsPage() {
 
   if (loading)
     return (
-      <div className="dashboard-container">
+      <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
         <LoadingComponent />
       </div>
     );
