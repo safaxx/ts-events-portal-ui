@@ -1,26 +1,27 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { expect, test, vi } from "vitest";
 import AddEventForm from "./AddEventForm";
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => jest.fn(),
+vi.mock("react-router-dom", async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => vi.fn(),
   useLocation: () => ({ state: null }),
   useParams: () => ({}),
 }));
 
-jest.mock("../../../utils/TimeZoneUtils", () => ({
+vi.mock("../../../utils/TimeZoneUtils", () => ({
   getTimezoneAbbreviation: () => "UTC",
   getUserTimezone: () => "UTC",
 }));
 
-jest.mock("../../Services/EventService", () => ({
+vi.mock("../../Services/EventService", () => ({
   __esModule: true,
   default: {
-    createEvent: jest.fn(),
-    updateEvent: jest.fn(),
-    deleteEvent: jest.fn(),
-    getEventById: jest.fn(),
+    createEvent: vi.fn(),
+    updateEvent: vi.fn(),
+    deleteEvent: vi.fn(),
+    getEventById: vi.fn(),
   },
 }));
 

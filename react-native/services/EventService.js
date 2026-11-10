@@ -15,7 +15,7 @@ const eventService = {
   getAllEvents: async (page = 0, size = 6, type = "UPCOMING", query) => {
     try {
       const response = await api.get(
-        `/public/events/all?page=${page}&size=${size}&listType=${type}&searchQuery=${query || ""}`,
+        `/public/all-events?page=${page}&size=${size}&listType=${type}&searchQuery=${query || ""}`,
       );
       return response.data;
     } catch (error) {
@@ -27,7 +27,7 @@ const eventService = {
 
   getEventById: async (eventId) => {
     try {
-      const response = await api.get(`/public/events/id?eventId=${eventId}`);
+      const response = await api.get(`/public/events?eventId=${eventId}`);
       return response.data;
     } catch (error) {
       const message =
