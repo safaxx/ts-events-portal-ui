@@ -1,4 +1,4 @@
-import api from "../Services/ApiRequestInterceptor";
+import api from "./ApiRequestInterceptor";
 
 const eventService = {
   /**
@@ -88,9 +88,14 @@ const eventService = {
    * Get user's RSVPs.
    * @returns {Promise<object>} List of events the user has RSVP'd to
    */
-  getMyRSVPs: async (page = 0, size = 6) => {
+  getMyRSVPs: async (page = 0, size = 6, listType = "UPCOMING") => {
     try {
-      const response = await api.get(`/events/my-rsvps?page=${page}&size=${size}`);
+      const params = new URLSearchParams({
+        page: String(page),
+        size: String(size),
+        listType,
+      });
+      const response = await api.get(`/events/my-rsvps?${params}`);
       return response.data;
     } catch (error) {
       const message =
@@ -102,9 +107,14 @@ const eventService = {
     }
   },
 
-  getMyCreatedEvents: async (page = 0, size = 6) => {
+  getMyCreatedEvents: async (page = 0, size = 6, listType = "UPCOMING") => {
     try {
-      const response = await api.get(`/events/my-created?page=${page}&size=${size}`);
+      const params = new URLSearchParams({
+        page: String(page),
+        size: String(size),
+        listType,
+      });
+      const response = await api.get(`/events/my-created?${params}`);
       return response.data;
     } catch (error) {
       const message =

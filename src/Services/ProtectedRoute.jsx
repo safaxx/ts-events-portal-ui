@@ -1,6 +1,6 @@
 // src/components/ProtectedRoute.jsx
 import { Navigate, useLocation } from 'react-router-dom';
-import authService from '../Services/AuthService'; // Adjust path as needed
+import authService from './AuthService'; // Adjust path as needed
 
 /**
  * This component checks if a user is authenticated.

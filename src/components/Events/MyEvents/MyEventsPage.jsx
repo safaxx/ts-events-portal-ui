@@ -2,9 +2,9 @@ import { ArrowDown, CalendarDays, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import eventService from "../../components/Services/EventService";
-import LoadingComponent from "../Loading/LoadingComponent";
-import EventCard from "./EventCard/EventCard";
+import eventService from "../../../Services/EventService";
+import LoadingComponent from "../../Loading/LoadingComponent";
+import EventCard from "../EventCard/EventCard";
 import "./MyEventsPage.css";
 
 export default function MyEventsPage() {

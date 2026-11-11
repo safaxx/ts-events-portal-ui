@@ -134,39 +134,7 @@ function EventCard({ event }) {
         <div className="detail-item">
           <span className="detail-text">Free</span>
         </div>
-        
-
-        {/* <div className="detail-item">
-           <span className="detail-icon">👥</span> 
-          <span className="detail-text">{event.allRSVPs || 0}</span>
-        </div> */}
       </div>
-
-      {/* Timezone Info 
-      <div className="timezone-info">
-        <span className="timezone-icon">🌍</span>
-        <span className="timezone-text">
-          {userTimezone} (Your timezone)
-        </span>
-      </div> */}
-
-      {/* Organizer Info */}
-      {/* <div className="organizer-info">
-        <span className="organizer-label">Host: </span>
-        <span className="organizer-email">{event.eventHostName}</span>
-      </div> */}
-
-      {/* Tags */}
-      {/* {tags.length > 0 && (
-        <div className="event-tags">
-          {tags.map((tag, index) => (
-            <span key={index} className="tag">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )} */}
-
     
       {/* Event Description */}
       <p className="event-description">
