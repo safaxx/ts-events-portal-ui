@@ -1,4 +1,4 @@
-import authService from "../../Services/AuthService";
+import authService from "../../../Services/AuthService";
 
 import "./GoogleCalendarEventButton.css";
 

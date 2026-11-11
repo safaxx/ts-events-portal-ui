@@ -12,8 +12,8 @@ import {
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import authService from "../../Services/AuthService";
+import { useLocation, useNavigate } from "react-router-dom";
+import authService from "../../../Services/AuthService";
 import "./Login.css";
 
 function Login() {
@@ -49,6 +49,7 @@ function Login() {
   };
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // State to manage OTP status
   const [otpSent, setOtpSent] = useState(false);
@@ -152,7 +153,7 @@ function Login() {
             "Error in authentication. Please try again.",
         });
       } else {
-        navigate("/dashboard");
+        navigate(location.state?.from || "/dashboard", { replace: true });
       }
     } catch (error) {
       console.error(error);

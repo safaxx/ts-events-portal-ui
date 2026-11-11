@@ -3,13 +3,11 @@ import "./App.css";
 import Login from "./components/Account/Login/Login.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import AddEventForm from "./components/Events/AddEvent/AddEventForm.jsx";
-import EventDetailsPage from "./components/Events/EventDetailsPage.jsx";
-import MyEventsPage from "./components/Events/MyEventsPage.jsx";
+import EventDetailsPage from "./components/Events/EventDetails/EventDetailsPage.jsx";
 import NavBar from "./components/NavBar/NavBar.jsx";
-import ProtectedRoute from "./components/Services/ProtectedRoute.jsx";
+import ProtectedRoute from "./Services/ProtectedRoute.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
-
-
+import MentorsPage from "./components/MentorDashboard/MentorsPage.jsx";
 
 function App() {
   return (
@@ -25,11 +23,7 @@ function App() {
           <Route path="*" element={<Navigate to="/dashboard" />} />
           <Route
             path="/my-events"
-            element={
-              <ProtectedRoute>
-                <MyEventsPage />
-              </ProtectedRoute>
-            }
+            element={<Navigate to="/dashboard?scope=created" replace />}
           />
           <Route
             path="/create-event"
@@ -44,6 +38,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AddEventForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ask-a-tech-sister"
+            element={
+              <ProtectedRoute>
+                <MentorsPage />
               </ProtectedRoute>
             }
           />

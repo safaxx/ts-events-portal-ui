@@ -5,7 +5,7 @@ import {
   getTimezoneAbbreviation,
   getUserTimezone,
 } from "../../../utils/TimeZoneUtils";
-import eventService from "../../Services/EventService";
+import eventService from "../../../Services/EventService";
 import "./AddEventForm.css";
 
 function AddEventForm() {

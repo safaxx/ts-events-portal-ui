@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import authService from "../../components/Services/AuthService";
-import eventService from "../../components/Services/EventService";
+import authService from "../../../Services/AuthService";
+import eventService from "../../../Services/EventService";
 import {
   formatEventDateTime,
   getRelativeDate,
   getTimeUntilEvent,
   getTimezoneAbbreviation,
-} from "../../utils/TimeZoneUtils";
-import GoogleCalendarEventButton from "../Account/GoogleAuth/GoogleCalendarEventButton";
-import DownloadEvent from "../Events/DownloadEvent/DownloadEvent";
-import LoadingComponent from "../Loading/LoadingComponent";
+} from "../../../utils/TimeZoneUtils";
+import GoogleCalendarEventButton from "../../Account/GoogleAuth/GoogleCalendarEventButton";
+import DownloadEvent from "../DownloadEvent/DownloadEvent";
+import LoadingComponent from "../../Loading/LoadingComponent";
 import "./EventDetailsPage.css";
 
 export default function EventDetailsPage() {
