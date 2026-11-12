@@ -1,11 +1,11 @@
-import authService from "../../Services/AuthService";
+import authService from "../../../Services/AuthService";
 
 import "./GoogleCalendarEventButton.css";
 
 // Define the API endpoint URL for your Spring Boot application
 // Replace with your actual domain/port if different from the example
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-const CONNECT_ENDPOINT = "/public/events/add-google-calendar-event";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const CONNECT_ENDPOINT = "/public/add-google-calendar-event";
 const RETURN_URL = window.location;
 
 const GoogleCalendarEventButton = ({ eventLink }) => {
