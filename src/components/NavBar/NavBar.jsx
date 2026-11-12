@@ -2,7 +2,6 @@ import {
   ArrowLeft,
   CalendarPlus,
   House,
-  LayoutDashboardIcon,
   LogIn,
   LogOut,
   MessageCircleQuestion,
