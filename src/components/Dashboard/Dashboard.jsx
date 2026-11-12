@@ -202,8 +202,9 @@ function Dashboard() {
   if (isLoading) {
     return (
       <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
-        <div className="mb-12 flex justify-center">
-          <Skeleton className="h-10 w-40" />
+        <div className="mb-6 space-y-2">
+          <Skeleton className="h-9 w-32" />
+          <Skeleton className="h-4 w-72 max-w-full" />
         </div>
         <div className="mb-5 flex flex-col gap-3 md:flex-row md:gap-4">
           <Skeleton className="h-[50px] flex-1" />
@@ -242,11 +243,12 @@ function Dashboard() {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
-      <div className="mb-12 text-center">
-        <h1 className="!mb-0 !text-[2.5rem] !font-bold !text-[#0F3363] max-md:!text-[2rem]">
-          Events
-        </h1>
-      </div>
+      <header className="mb-6">
+        <h1 className="mb-1! text-3xl!">Events</h1>
+        <p className="mb-0! text-sm! text-(--ts-text)!">
+          Discover upcoming Tech Sisters events, RSVP and join the community.
+        </p>
+      </header>
 
       <div className="mb-5 flex min-w-0 flex-nowrap items-center gap-1.5 lg:gap-3">
         {scope === "all" && (
