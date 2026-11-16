@@ -7,7 +7,8 @@ import EventDetailsPage from "./components/Events/EventDetails/EventDetailsPage.
 import NavBar from "./components/NavBar/NavBar.jsx";
 import ProtectedRoute from "./Services/ProtectedRoute.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
-import MentorsPage from "./components/MentorDashboard/MentorsPage.jsx";
+import MentorsPage from "./components/Mentors/MentorDashboard/MentorsPage.jsx";
+import MentorDetails from "./components/Mentors/MentorDetails/MentorDetails";
 
 function App() {
   return (
@@ -41,14 +42,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/ask-a-tech-sister"
-            element={
-              <ProtectedRoute>
-                <MentorsPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/mentors" element={<MentorsPage />} />
+          <Route path="/mentors/:mentorId" element={<MentorDetails />} />
         </Routes>
       </main>
     </BrowserRouter>

@@ -16,8 +16,8 @@
   padding: 20px 0;
   gap: 4px;
 
-  background: #ffffff;
-  border-right: 1px solid #f0f0f0;
+  background: white;
+  border-right: 1px solid var(--ts-surface);
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
 
   /* smooth expand */
@@ -277,7 +277,7 @@
     background: rgba(255, 255, 255, 0.96);
     border: 1px solid #ece7df;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(17, 34, 80, 0.16);
+    box-shadow: 0 10px 30px rgba(53, 70, 95, 0.12);
     backdrop-filter: blur(12px);
   }
 

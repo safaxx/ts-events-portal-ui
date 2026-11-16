@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MentorCard } from "./MentorCard";
 import { mentorService } from "@/Services/MentorService";
 import { toast } from "sonner";
-import LoadingComponent from "../Loading/LoadingComponent";
+import LoadingComponent from "../../Loading/LoadingComponent";
 
 const MentorsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ const MentorsPage = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-(--ts-surface) bg-(--ts-bg-soft) px-6 py-12 text-center">
-          <p className="mb-0! max-w-md text-sm! text-[#747474]!">
+          <p className="mb-0! max-w-md text-sm! text-(--ts-text)!">
             Uh oh! Looks like there are no mentors available at the moment.
           </p>
         </div>

@@ -1,6 +1,5 @@
 import {
   ArrowLeft,
-  CalendarPlus,
   House,
   LogIn,
   LogOut,
@@ -60,8 +59,6 @@ function NavBar() {
 
   const userName = localStorage.getItem("name");
   const userEmail = localStorage.getItem("email");
-  const userRoles = localStorage.getItem("roles") || "";
-  const isAdmin = userRoles.includes("ROLE_ADMIN");
 
   const handleLogout = () => {
     authService.logout();
@@ -96,23 +93,11 @@ function NavBar() {
             <span className="sidebar__label">Events</span>
           </Button>
 
-          {isAdmin && (
-            <Button
-              variant="ghost"
-              className={`sidebar__item ${isActive("/create-event") ? "active" : ""}`}
-              onClick={() => nav("/create-event")}
-              aria-current={isActive("/create-event") ? "page" : undefined}
-            >
-              <CalendarPlus aria-hidden="true" className="sidebar__icon" />
-              <span className="sidebar__label">Create Event</span>
-            </Button>
-          )}
-
           <Button
             variant="ghost"
-            className={`sidebar__item ${isActive("/ask-a-tech-sister") ? "active" : ""}`}
-            onClick={() => nav("/ask-a-tech-sister")}
-            aria-current={isActive("/ask-a-tech-sister") ? "page" : undefined}
+            className={`sidebar__item ${isActive("/mentors") ? "active" : ""}`}
+            onClick={() => nav("/mentors")}
+            aria-current={isActive("/mentors") ? "page" : undefined}
           >
             <MessageCircleQuestion
               aria-hidden="true"
@@ -164,23 +149,11 @@ function NavBar() {
           <span>Events</span>
         </Button>
 
-        {isAdmin && (
-          <Button
-            variant="ghost"
-            className={`mobile-tabbar__item ${isActive("/create-event") ? "active" : ""}`}
-            onClick={() => nav("/create-event")}
-            aria-current={isActive("/create-event") ? "page" : undefined}
-          >
-            <CalendarPlus aria-hidden="true" className="mobile-tabbar__icon" />
-            <span>Create</span>
-          </Button>
-        )}
-
         <Button
             variant="ghost"
-            className={`mobile-tabbar__item ${isActive("/ask-a-tech-sister") ? "active" : ""}`}
-            onClick={() => nav("/ask-a-tech-sister")}
-            aria-current={isActive("/ask-a-tech-sister") ? "page" : undefined}
+            className={`mobile-tabbar__item ${isActive("/mentors") ? "active" : ""}`}
+            onClick={() => nav("/mentors")}
+            aria-current={isActive("/mentors") ? "page" : undefined}
           >
           <MessageCircleQuestion aria-hidden="true" className="mobile-tabbar__icon" />
           <span>Ask a Tech Sister</span>

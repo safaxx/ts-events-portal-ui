@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { beforeEach, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import Dashboard from "./Dashboard";
 import eventService from "../../Services/EventService";
 import authService from "../../Services/AuthService";
@@ -28,6 +28,7 @@ function renderDashboard() {
     <MemoryRouter initialEntries={["/dashboard"]}>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/create-event" element={<div>Create event form</div>} />
         <Route path="/login" element={<div>Login required</div>} />
       </Routes>
     </MemoryRouter>,
@@ -36,6 +37,7 @@ function renderDashboard() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.removeItem("roles");
   authService.isAuthenticated.mockReturnValue(true);
   eventService.getAllEvents.mockResolvedValue({
     events: [],
@@ -52,6 +54,26 @@ beforeEach(() => {
     totalPages: 0,
     success: true,
   });
+});
+
+afterEach(() => {
+  cleanup();
+});
+
+test("shows the create-event CTA to admins and navigates to the form", async () => {
+  localStorage.setItem("roles", "ROLE_ADMIN");
+  renderDashboard();
+
+  fireEvent.click(await screen.findByRole("button", { name: "Create an event" }));
+
+  expect(await screen.findByText("Create event form")).toBeInTheDocument();
+});
+
+test("hides the create-event CTA from non-admins", async () => {
+  renderDashboard();
+
+  await waitFor(() => expect(eventService.getAllEvents).toHaveBeenCalled());
+  expect(screen.queryByRole("button", { name: "Create an event" })).toBeNull();
 });
 
 test("loads personal event scopes using the selected time filter", async () => {

@@ -8,13 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 // Files in /public are served from the site root, so no "/public" in the path.
 const DEFAULT_MENTOR_IMAGE = "/eventcard.jpg";
 
 export function MentorCard({ mentor }) {
+  const navigate = useNavigate();
   return (
-    <Card className="h-full w-full gap-3 overflow-hidden rounded-xl border border-(--ts-light-blue) bg-white pt-0 pb-5 font-[Poppins] shadow-[0_2px_12px_rgba(17,34,80,0.08)] ring-0 transition-all duration-300 hover:-translate-y-1.5 hover:border-(--ts-secondary) hover:bg-(--ts-bg-soft) hover:shadow-[0_8px_24px_rgba(17,34,80,0.15)]">
+    <Card className="h-full w-full gap-3 overflow-hidden rounded-xl border border-(--ts-light-blue) bg-white pt-0 pb-5 font-[Poppins] shadow-[0_2px_12px_rgba(53,70,95,0.06)] ring-0 transition-all duration-300 hover:-translate-y-1.5 hover:border-(--ts-secondary) hover:bg-(--ts-bg-soft) hover:shadow-[0_8px_24px_rgba(53,70,95,0.12)]">
       <img
         src={DEFAULT_MENTOR_IMAGE}
         alt={`${mentor.name} cover`}
@@ -62,7 +64,11 @@ export function MentorCard({ mentor }) {
       </div>
 
       <CardFooter className="mt-auto border-t-0 bg-transparent px-5">
-        <Button className="h-auto w-full cursor-pointer rounded-lg bg-(--ts-primary) px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(17,34,80,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-(--ts-secondary) hover:shadow-[0_6px_16px_rgba(17,34,80,0.4)]">
+        <Button
+          type="button"
+          onClick={() => navigate(`/mentors/${mentor.mentorId}`)}
+          className="h-auto w-full cursor-pointer rounded-lg bg-(--ts-primary) px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(53,70,95,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-(--ts-secondary) hover:shadow-[0_6px_16px_rgba(53,70,95,0.25)]"
+        >
           View Profile
         </Button>
       </CardFooter>
