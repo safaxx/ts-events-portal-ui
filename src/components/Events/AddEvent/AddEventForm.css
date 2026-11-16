@@ -1,24 +1,10 @@
-/* Tech Sisters Color Palette */
-:root {
-  --ts-primary: #112250;      /* Deep navy */
-  --ts-secondary: #3c507d;    /* Slate blue */
-  --ts-text: #4f5d75;         /* Muted text */
-  --ts-accent: #e0c58f;       /* Warm gold */
-  --ts-surface: #d9cbc2;      /* Dusty beige */
-  --ts-bg-soft: #f5f0e9;      /* Soft cream */
-  --ts-light-blue: #f7fafc;   /* Light neutral background */
-  --ts-pink: #f6e3dc;         /* Soft blush */
-}
-
-
-
 .create-event-container {
   max-width: 1120px;
   margin: 12px auto 28px;
   padding: 28px;
   background: white;
   border-radius: 18px;
-  box-shadow: 0 18px 42px rgba(17, 34, 80, 0.1);
+  box-shadow: 0 18px 42px rgba(53, 70, 95, 0.08);
   border: 1px solid rgba(60, 80, 125, 0.14);
 }
 
@@ -125,7 +111,7 @@
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid rgba(60, 80, 125, 0.16);
-  box-shadow: 0 8px 20px rgba(17, 34, 80, 0.08);
+  box-shadow: 0 8px 20px rgba(53, 70, 95, 0.06);
 }
 
 /* Form Actions - Buttons Container */
@@ -152,7 +138,7 @@
 .submit-button {
   background: var(--ts-primary);
   color: var(--ts-bg-soft);
-  box-shadow: 0 10px 24px rgba(17, 34, 80, 0.22);
+  box-shadow: 0 10px 24px rgba(53, 70, 95, 0.16);
 }
 
 .submit-button:hover:not(:disabled) {

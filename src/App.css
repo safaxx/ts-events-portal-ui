@@ -1,20 +1,20 @@
 /* Tech Sisters Global Color Palette */
 :root {
-  --ts-primary: #112250;      /* Deep navy */
-  --ts-secondary: #3c507d;    /* Slate blue */
-  --ts-text: #4f5d75;         /* Muted text */
-  --ts-accent: #e0c58f;       /* Warm gold */
-  --ts-surface: #d9cbc2;      /* Dusty beige */
-  --ts-bg-soft: #f5f0e9;      /* Soft cream */
-  --ts-light-blue: #f7fafc;   /* Very light neutral */
-  --ts-pink: #f6e3dc;         /* Soft blush */
+  --ts-primary: #35465f;
+  --ts-secondary: #62758d;
+  --ts-text: #596574;
+  --ts-accent: #efe5d8;
+  --ts-surface: #e2d7ca;
+  --ts-bg-soft: #f8f4ee;
+  --ts-light-blue: #e6e1da;
+  --ts-pink: #f6e3dc;
   --sidebar-width-collapsed: 64px;
   --sidebar-width-expanded: 220px;
 }
 
 /* Body Styling - Tech Sisters Theme */
 body {
-  background: #fff;
+  background: var(--ts-bg-soft);
   word-wrap: break-word;
   color: #404040;
   margin: 0;
@@ -33,7 +33,7 @@ body {
   width: calc(100% - var(--sidebar-width-collapsed));
   padding-top: 1rem;
   min-height: calc(100vh - 80px);
-  background: #fff !important;
+  background: var(--ts-bg-soft) !important;
   transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
               width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -100,13 +100,13 @@ button {
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(15, 51, 99, 0.3);
+  box-shadow: 0 4px 12px rgba(53, 70, 95, 0.2);
 }
 
 .btn-primary:hover {
   background: var(--ts-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 51, 99, 0.4);
+  box-shadow: 0 6px 16px rgba(53, 70, 95, 0.25);
 }
 
 .btn-secondary {
@@ -139,13 +139,13 @@ button {
   background: white;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(15, 51, 99, 0.08);
+  box-shadow: 0 4px 12px rgba(53, 70, 95, 0.06);
   transition: all 0.3s ease;
   border: 1px solid var(--ts-light-blue);
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(15, 51, 99, 0.12);
+  box-shadow: 0 8px 24px rgba(53, 70, 95, 0.1);
   transform: translateY(-4px);
 }
 

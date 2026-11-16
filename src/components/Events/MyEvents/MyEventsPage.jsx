@@ -163,10 +163,10 @@ export default function MyEventsPage() {
       {/* --- Toggle Buttons (same style as Dashboard) --- */}
       <div className="mb-12 flex flex-wrap justify-center gap-4 max-md:w-full max-md:flex-col max-md:gap-3">
         <button
-          className={`flex items-center justify-center gap-2.5 rounded-lg border-2 px-7 py-3.5 text-[15px] font-semibold shadow-[0_2px_8px_rgba(15,51,99,0.08)] transition-all max-md:w-full ${
+          className={`flex items-center justify-center gap-2.5 rounded-lg border-2 px-7 py-3.5 text-[15px] font-semibold shadow-[0_2px_8px_rgba(53,70,95,0.08)] transition-all max-md:w-full ${
             activeTab === "created"
-              ? "border-[#0F3363] bg-[#0F3363] text-white shadow-[0_4px_16px_rgba(15,51,99,0.3)]"
-              : "border-[#C2D7ED] bg-white text-[#4970A5] hover:-translate-y-0.5 hover:border-[#0F3363] hover:bg-[#FBF1E8] hover:text-[#0F3363] hover:shadow-[0_4px_12px_rgba(15,51,99,0.15)]"
+              ? "border-(--ts-primary) bg-(--ts-primary) text-white shadow-[0_4px_16px_rgba(53,70,95,0.2)]"
+              : "border-(--ts-surface) bg-white text-(--ts-secondary) hover:-translate-y-0.5 hover:border-(--ts-primary) hover:bg-(--ts-accent) hover:text-(--ts-primary) hover:shadow-[0_4px_12px_rgba(53,70,95,0.12)]"
           }`}
           onClick={() => setActiveTab("created")}
         >
@@ -174,10 +174,10 @@ export default function MyEventsPage() {
         </button>
 
         <button
-          className={`flex items-center justify-center gap-2.5 rounded-lg border-2 px-7 py-3.5 text-[15px] font-semibold shadow-[0_2px_8px_rgba(15,51,99,0.08)] transition-all max-md:w-full ${
+          className={`flex items-center justify-center gap-2.5 rounded-lg border-2 px-7 py-3.5 text-[15px] font-semibold shadow-[0_2px_8px_rgba(53,70,95,0.08)] transition-all max-md:w-full ${
             activeTab === "rsvps"
-              ? "border-[#0F3363] bg-[#0F3363] text-white shadow-[0_4px_16px_rgba(15,51,99,0.3)]"
-              : "border-[#C2D7ED] bg-white text-[#4970A5] hover:-translate-y-0.5 hover:border-[#0F3363] hover:bg-[#FBF1E8] hover:text-[#0F3363] hover:shadow-[0_4px_12px_rgba(15,51,99,0.15)]"
+              ? "border-(--ts-primary) bg-(--ts-primary) text-white shadow-[0_4px_16px_rgba(53,70,95,0.2)]"
+              : "border-(--ts-surface) bg-white text-(--ts-secondary) hover:-translate-y-0.5 hover:border-(--ts-primary) hover:bg-(--ts-accent) hover:text-(--ts-primary) hover:shadow-[0_4px_12px_rgba(53,70,95,0.12)]"
           }`}
           onClick={() => setActiveTab("rsvps")}
         >
@@ -196,13 +196,13 @@ export default function MyEventsPage() {
         </div>
       ) : (
         <div className="flex min-h-[320px] flex-col items-center justify-center px-6 py-12 text-center">
-          <div className="mb-5 flex size-14 items-center justify-center rounded-full bg-[#FBF1E8] text-[#0F3363]">
+          <div className="mb-5 flex size-14 items-center justify-center rounded-full bg-(--ts-accent) text-(--ts-primary)">
             <CalendarDays aria-hidden="true" className="size-6" />
           </div>
-          <h2 className="!mb-2 !text-xl !font-semibold !text-[#0F3363]">
+          <h2 className="!mb-2 !text-xl !font-semibold !text-(--ts-primary)">
             {activeTab === "created" ? "No created events yet" : "No RSVPs yet"}
           </h2>
-          <p className="!mb-0 max-w-md !text-sm !text-[#747474]">
+          <p className="!mb-0 max-w-md !text-sm !text-(--ts-text)">
             {activeTab === "created"
               ? "Events you create will appear here."
               : "Events you RSVP to will appear here."}
@@ -217,7 +217,7 @@ export default function MyEventsPage() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={isFetchingMore}
-            className="h-10 min-w-36 gap-2 border-[#C2D7ED] px-5 text-[#0F3363] hover:bg-[#FBF1E8] disabled:opacity-60"
+            className="h-10 min-w-36 gap-2 border-(--ts-surface) px-5 text-(--ts-primary) hover:bg-(--ts-accent) disabled:opacity-60"
           >
             {isFetchingMore ? (
               <>

@@ -1,5 +1,6 @@
 import {
   ArrowDown,
+  CalendarPlus,
   CalendarDays,
   Check,
   ChevronDown,
@@ -32,6 +33,7 @@ function Dashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const isAdmin = (localStorage.getItem("roles") || "").includes("ROLE_ADMIN");
   const requestedScope = searchParams.get("scope");
   const scope = ["rsvps", "created"].includes(requestedScope) ? requestedScope : "all";
   const activeTab = searchParams.get("time") === "PAST" ? "PAST" : "UPCOMING";
@@ -214,7 +216,7 @@ function Dashboard() {
           {Array.from({ length: 3 }, (_, index) => (
             <div
               key={index}
-              className="overflow-hidden rounded-xl border border-[#C2D7ED] bg-white"
+              className="overflow-hidden rounded-xl border border-(--ts-surface) bg-white"
             >
               <Skeleton className="h-48 w-full rounded-none" />
               <div className="space-y-4 p-5">
@@ -243,11 +245,28 @@ function Dashboard() {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[1200px] px-4 py-10 md:px-5 md:pt-8 md:pb-[60px]">
-      <header className="mb-6">
-        <h1 className="mb-1! text-3xl!">Events</h1>
-        <p className="mb-0! text-sm! text-(--ts-text)!">
-          Discover upcoming Tech Sisters events, RSVP and join the community.
-        </p>
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="mb-1! text-3xl!">Events</h1>
+          <p className="mb-0! text-sm! text-(--ts-text)!">
+            Discover upcoming Tech Sisters events, RSVP and join the community.
+          </p>
+        </div>
+        {isAdmin && (
+          <div className="flex flex-col gap-2 rounded-xl border border-(--ts-surface) bg-white p-3 sm:flex-row sm:items-center sm:gap-4 sm:px-4">
+            <p className="mb-0! text-sm! text-(--ts-text)!">
+              Not finding what you’re looking for?
+            </p>
+            <Button
+              type="button"
+              onClick={() => navigate("/create-event")}
+              className="h-10 shrink-0 gap-2 rounded-lg bg-(--ts-primary) px-4 text-white shadow-sm hover:bg-(--ts-secondary)"
+            >
+              <CalendarPlus aria-hidden="true" />
+              Create an event
+            </Button>
+          </div>
+        )}
       </header>
 
       <div className="mb-5 flex min-w-0 flex-nowrap items-center gap-1.5 lg:gap-3">
@@ -267,12 +286,12 @@ function Dashboard() {
                   placeholder="Search events..."
                   value={searchInput}
                   onChange={(event) => setSearchInput(event.target.value)}
-                  className="h-10 min-w-0 rounded-l-xl border-[#D5E1EE] bg-white px-2 shadow-sm focus-visible:ring-[#0F3363]/20 lg:h-[50px] lg:px-3"
+                  className="h-10 min-w-0 rounded-l-xl border-(--ts-surface) bg-white px-2 shadow-sm focus-visible:ring-[#62758D]/25 lg:h-[50px] lg:px-3"
                 />
                 <Button
                   type="submit"
                   aria-label="Search events"
-                  className="h-10 shrink-0 gap-1 rounded-r-xl bg-[#0F3363] px-2.5 text-white shadow-sm hover:bg-[#17477F] lg:h-[50px] lg:gap-2 lg:px-4"
+                  className="h-10 shrink-0 gap-1 rounded-r-xl bg-(--ts-primary) px-2.5 text-white shadow-sm hover:bg-(--ts-secondary) lg:h-[50px] lg:gap-2 lg:px-4"
                 >
                   <Search aria-hidden="true" />
                   <span className="hidden lg:inline">Search</span>
@@ -285,7 +304,7 @@ function Dashboard() {
                   size="icon"
                   onClick={handleClear}
                   aria-label="Clear search"
-                  className="h-9 w-8 shrink-0 rounded-lg text-[#59718D] hover:bg-[#F1F6FB] hover:text-[#0F3363] lg:h-[50px] lg:w-[50px] lg:rounded-xl"
+                  className="h-9 w-8 shrink-0 rounded-lg text-(--ts-secondary) hover:bg-(--ts-bg-soft) hover:text-(--ts-primary) lg:h-[50px] lg:w-[50px] lg:rounded-xl"
                 >
                   <X aria-hidden="true" />
                 </Button>
@@ -298,10 +317,10 @@ function Dashboard() {
           <DropdownMenu>
             <DropdownMenuTrigger
               aria-label={`Event scope: ${scope === "rsvps" ? "My RSVPs" : scope === "created" ? "Created by me" : "All events"}`}
-              className="group flex h-10 w-[100px] items-center justify-between gap-1 rounded-xl border border-[#D5E1EE] bg-white px-1.5 text-xs font-semibold text-[#0F3363] shadow-sm transition hover:border-[#9DB7D2] hover:bg-[#F8FAFD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F3363]/20 aria-expanded:border-[#0F3363] aria-expanded:bg-[#F1F6FB] aria-expanded:ring-2 aria-expanded:ring-[#0F3363]/15 max-[380px]:w-[84px] lg:h-[50px] lg:w-[190px] lg:gap-3 lg:px-4 lg:text-sm"
+              className="group flex h-10 w-[100px] items-center justify-between gap-1 rounded-xl border border-(--ts-surface) bg-white px-1.5 text-xs font-semibold text-(--ts-primary) shadow-sm transition hover:border-[#B7A995] hover:bg-(--ts-bg-soft) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#62758D]/25 aria-expanded:border-(--ts-secondary) aria-expanded:bg-(--ts-bg-soft) aria-expanded:ring-2 aria-expanded:ring-[#62758D]/20 max-[380px]:w-[84px] lg:h-[50px] lg:w-[190px] lg:gap-3 lg:px-4 lg:text-sm"
             >
               <span className="flex min-w-0 items-center gap-2">
-                <ListFilter aria-hidden="true" className="size-3.5 shrink-0 text-[#547394] lg:size-4" />
+                <ListFilter aria-hidden="true" className="size-3.5 shrink-0 text-(--ts-secondary) lg:size-4" />
                 <span className="truncate lg:hidden">
                   {scope === "rsvps"
                     ? "RSVPs"
@@ -319,13 +338,13 @@ function Dashboard() {
               </span>
               <ChevronDown
                 aria-hidden="true"
-                className="size-3.5 shrink-0 text-[#547394] transition-transform group-aria-expanded:rotate-180 lg:size-4"
+                className="size-3.5 shrink-0 text-(--ts-secondary) transition-transform group-aria-expanded:rotate-180 lg:size-4"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
               sideOffset={6}
-              className="min-w-[190px] rounded-xl border border-[#D5E1EE] bg-white p-1.5 shadow-[0_12px_32px_rgba(15,51,99,0.16)]"
+              className="min-w-[190px] rounded-xl border border-(--ts-surface) bg-white p-1.5 shadow-[0_12px_32px_rgba(53,70,95,0.12)]"
             >
               {[
                 { value: "all", label: "All events" },
@@ -335,11 +354,11 @@ function Dashboard() {
                 <DropdownMenuItem
                   key={option.value}
                   onClick={() => handleScopeChange(option.value)}
-                  className="h-10 cursor-pointer rounded-lg px-3 text-sm font-medium text-[#425B78] focus:bg-[#EFF5FB] focus:text-[#0F3363]"
+                  className="h-10 cursor-pointer rounded-lg px-3 text-sm font-medium text-(--ts-text) focus:bg-(--ts-bg-soft) focus:text-(--ts-primary)"
                 >
                   {option.label}
                   {scope === option.value && (
-                    <Check aria-hidden="true" className="ml-auto size-4 text-[#0F3363]" />
+                    <Check aria-hidden="true" className="ml-auto size-4 text-(--ts-primary)" />
                   )}
                 </DropdownMenuItem>
               ))}
@@ -351,17 +370,17 @@ function Dashboard() {
             onValueChange={handleTimeChange}
             className="w-[132px] shrink-0 max-[380px]:w-[120px] lg:w-auto"
           >
-            <TabsList className="h-10 w-full justify-stretch rounded-xl border border-[#D5E1EE] bg-white p-1 shadow-sm lg:h-[50px] lg:w-auto">
+            <TabsList className="h-10 w-full justify-stretch rounded-xl border border-(--ts-surface) bg-white p-1 shadow-sm lg:h-[50px] lg:w-auto">
               <TabsTrigger
                 value="UPCOMING"
-                className="h-8 min-w-0 flex-1 gap-0 rounded-lg px-0.5 text-[11px] font-semibold text-[#647A93] transition-all hover:bg-[#F3F7FB] hover:text-[#0F3363] data-active:bg-[#0F3363] data-active:text-white data-active:shadow-[0_2px_8px_rgba(15,51,99,0.2)] lg:h-10 lg:min-w-[118px] lg:gap-1.5 lg:px-4 lg:text-sm lg:flex-initial"
+                className="h-8 min-w-0 flex-1 gap-0 rounded-lg px-0.5 text-[11px] font-semibold text-(--ts-secondary) transition-all hover:bg-(--ts-bg-soft) hover:text-(--ts-primary) data-active:bg-(--ts-primary) data-active:text-white data-active:shadow-[0_2px_8px_rgba(53,70,95,0.16)] lg:h-10 lg:min-w-[118px] lg:gap-1.5 lg:px-4 lg:text-sm lg:flex-initial"
               >
                 <CalendarDays aria-hidden="true" className="hidden size-4 lg:inline" />
                 Upcoming
               </TabsTrigger>
               <TabsTrigger
                 value="PAST"
-                className="h-8 min-w-0 flex-1 gap-0 rounded-lg px-0.5 text-[11px] font-semibold text-[#647A93] transition-all hover:bg-[#F3F7FB] hover:text-[#0F3363] data-active:bg-[#0F3363] data-active:text-white data-active:shadow-[0_2px_8px_rgba(15,51,99,0.2)] lg:h-10 lg:min-w-[118px] lg:gap-1.5 lg:px-4 lg:text-sm lg:flex-initial"
+                className="h-8 min-w-0 flex-1 gap-0 rounded-lg px-0.5 text-[11px] font-semibold text-(--ts-secondary) transition-all hover:bg-(--ts-bg-soft) hover:text-(--ts-primary) data-active:bg-(--ts-primary) data-active:text-white data-active:shadow-[0_2px_8px_rgba(53,70,95,0.16)] lg:h-10 lg:min-w-[118px] lg:gap-1.5 lg:px-4 lg:text-sm lg:flex-initial"
               >
                 <History aria-hidden="true" className="hidden size-4 lg:inline" />
                 Past
@@ -374,14 +393,14 @@ function Dashboard() {
       {/* Events Grid */}
       {loadFailed ? null : allEvents.length === 0 ? (
         <div className="flex min-h-[320px] flex-col items-center justify-center px-6 py-12 text-center">
-          <div className="mb-5 flex size-14 items-center justify-center rounded-full bg-[#FBF1E8] text-[#0F3363]">
+          <div className="mb-5 flex size-14 items-center justify-center rounded-full bg-(--ts-accent) text-(--ts-primary)">
             {activeTab === "PAST" ? (
               <History aria-hidden="true" className="size-6" />
             ) : (
               <CalendarDays aria-hidden="true" className="size-6" />
             )}
           </div>
-          <h2 className="!mb-2 !text-xl !font-semibold !text-[#0F3363]">
+          <h2 className="!mb-2 !text-xl !font-semibold !text-(--ts-primary)">
             {scope === "all" && searchQuery
               ? "No events match your search"
               : scope === "rsvps"
@@ -396,7 +415,7 @@ function Dashboard() {
                     ? "No past events yet"
                     : "No upcoming events right now"}
           </h2>
-          <p className="!mb-0 max-w-md !text-sm !text-[#747474]">
+          <p className="!mb-0 max-w-md !text-sm !text-(--ts-text)">
             {scope === "all" && searchQuery
               ? "Try a different search term or clear your search."
               : scope === "rsvps"
@@ -412,7 +431,7 @@ function Dashboard() {
               type="button"
               variant="outline"
               onClick={handleClear}
-              className="mt-5 border-[#C2D7ED] text-[#0F3363]"
+              className="mt-5 border-(--ts-surface) text-(--ts-primary)"
             >
               Clear search
             </Button>
@@ -435,7 +454,7 @@ function Dashboard() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={isFetchingMore}
-            className="h-10 min-w-36 gap-2 border-[#C2D7ED] px-5 text-[#0F3363] hover:bg-[#FBF1E8] disabled:opacity-60"
+            className="h-10 min-w-36 gap-2 border-(--ts-surface) px-5 text-(--ts-primary) hover:bg-(--ts-accent) disabled:opacity-60"
           >
             {isFetchingMore ? (
               <>
