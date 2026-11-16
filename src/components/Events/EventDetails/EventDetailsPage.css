@@ -1,13 +1,3 @@
-/* Tech Sisters palette (reuse vars from your other files if present) */
-:root {
-  --ts-primary: #0F3363;
-  --ts-secondary: #4970A5;
-  --ts-text: #747474;
-  --ts-accent: #FBF1E8;
-  --ts-light-blue: #C2D7ED;
-  --ts-pink: #FDD9D9;
-}
-
 /* page root */
 .event-details-page-root {
   padding: 48px 24px;
@@ -136,7 +126,7 @@
   border-radius: 12px;
   padding: 20px;
   border: 1px solid var(--ts-light-blue);
-  box-shadow: 0 6px 20px rgba(15,51,99,0.06);
+  box-shadow: 0 6px 20px rgba(53,70,95,0.05);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -258,7 +248,7 @@
   color: var(--ts-primary);
   padding: 10px 16px;
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(15,51,99,0.08);
+  box-shadow: 0 6px 18px rgba(53,70,95,0.06);
   font-weight: 700;
 }
 .edit-button {
@@ -274,7 +264,7 @@
 }
 
 .edit-button:hover {
-  background: #0d2950;
+  background: var(--ts-secondary);
 }
 
 .edit-button:active {
@@ -303,6 +293,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.15s ease-in-out;
+}
+
+.action-btn-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
 }
 
 /* Edit Button */

@@ -52,7 +52,7 @@ const eventService = {
    */
   getEventById: async (eventId) => {
     try {
-      const response = await api.get(`/public/events?eventId=${eventId}`);
+      const response = await api.get(`/public/event/${eventId}`);
       return response.data;
     } catch (error) {
       const message =
